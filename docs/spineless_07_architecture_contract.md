@@ -1,4 +1,5 @@
 # Spineless — Architecture Contract
+
 **Version 2.0 | Source of Truth**
 
 ---
@@ -127,6 +128,7 @@ Crystallization dissolves — cold-to-warm visual reversal
 **Live (state):** Working state. Fully editable. Continuous compilation. Live Runtime Sandbox — a managed sandboxed execution environment within Spineless infrastructure for testing only. Not user-facing. No external URL.
 
 **Seal (action):** Promotes current Live spine to a production snapshot.
+
 1. Captures spine state as immutable SealedSnapshot
 2. Compiles to complete Next.js project
 3. Pushes to Vercel via API
@@ -154,19 +156,19 @@ Spineless is a web application. The spine editor runs in the browser. Generated 
 
 ## 5. Persistence Model
 
-| Data | Storage | Durability |
-|------|---------|-----------|
-| Spine graph state | Spineless cloud database | Permanent, versioned |
-| SealedSnapshot (current) | Spineless cloud database | Permanent per snapshot |
-| SealedSnapshot (history) | Spineless cloud database | Retained for N releases |
-| PendingChange queue | Spineless cloud database | Until included entries clear on successful Release; failed Release preserves the queue |
-| Generated Next.js project | Vercel (per deployment) | Managed by Vercel |
-| Execution traces | Spineless cloud database | Rolling 30-day window |
-| Ghost trace data | Spineless cloud database | Rolling 30-day window |
-| Eval Card results | Spineless cloud database | Rolling 90-day window |
-| Cost and latency history | Spineless cloud database | Rolling 90-day window |
-| Secrets | Spineless encrypted secrets store | Permanent until deleted |
-| Memory/vector/RAG data | External provider (user-configured) | Provider-managed |
+| Data                      | Storage                             | Durability                                                                             |
+| ------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------- |
+| Spine graph state         | Spineless cloud database            | Permanent, versioned                                                                   |
+| SealedSnapshot (current)  | Spineless cloud database            | Permanent per snapshot                                                                 |
+| SealedSnapshot (history)  | Spineless cloud database            | Retained for N releases                                                                |
+| PendingChange queue       | Spineless cloud database            | Until included entries clear on successful Release; failed Release preserves the queue |
+| Generated Next.js project | Vercel (per deployment)             | Managed by Vercel                                                                      |
+| Execution traces          | Spineless cloud database            | Rolling 30-day window                                                                  |
+| Ghost trace data          | Spineless cloud database            | Rolling 30-day window                                                                  |
+| Eval Card results         | Spineless cloud database            | Rolling 90-day window                                                                  |
+| Cost and latency history  | Spineless cloud database            | Rolling 90-day window                                                                  |
+| Secrets                   | Spineless encrypted secrets store   | Permanent until deleted                                                                |
+| Memory/vector/RAG data    | External provider (user-configured) | Provider-managed                                                                       |
 
 Every confirmed spine mutation creates a version entry. Full mutation history exists as the foundation for a future version history browser.
 
@@ -178,17 +180,20 @@ Eval Cards compile to **fully async middleware wrappers** inserted at the correc
 
 ```typescript
 // Canonical Eval middleware — fully async, zero execution latency
-async function evalMiddleware(aOutput: AOutput, evalId: string): Promise<AOutput> {
+async function evalMiddleware(
+  aOutput: AOutput,
+  evalId: string,
+): Promise<AOutput> {
   void evalEngine
     .evaluate({ evalId, output: aOutput, timestamp: Date.now() })
-    .then(result => evalEngine.stream(evalId, result))
+    .then((result) => evalEngine.stream(evalId, result))
     .catch(() => evalEngine.recordTelemetryGap(evalId));
   return aOutput;
 }
 
 // In the generated execution chain:
 const aOutput = await cardA_execute(input);
-const passthrough = await evalMiddleware(aOutput, 'eval_uuid');
+const passthrough = await evalMiddleware(aOutput, "eval_uuid");
 const bOutput = await cardB_execute(passthrough);
 ```
 
@@ -221,7 +226,7 @@ interface PromptToModelPayload {
 // Model Card produces — runtime output consumed by downstream
 interface ModelOutputPayload {
   values: Record<string, unknown>;
-  rawResponse?: string;                // not persisted if any declared output field is sensitive unless schema-redacted; never user-facing
+  rawResponse?: string; // not persisted if any declared output field is sensitive unless schema-redacted; never user-facing
   tokenUsage: { input: number; output: number };
   latencyMs: number;
   cost: number;
@@ -282,29 +287,56 @@ If the model produces output that does not match the declared schema, the Model 
 ## 9. Canonical Data Contracts
 
 ```typescript
-type SystemMode = 'live' | 'sealed';
+type SystemMode = "live" | "sealed";
 
 type LifecycleStage =
-  | 'idle' | 'editing' | 'impact_analysis' | 'suggestions_visible'
-  | 'agent_invoked' | 'confirming' | 'spine_mutating' | 'compiling'
-  | 'live_runtime_updating' | 'pending_change_queued'
-  | 'release_validating' | 'release_compiling'
-  | 'release_deploying' | 'snapshot_updating' | 'spine_settled';
+  | "idle"
+  | "editing"
+  | "impact_analysis"
+  | "suggestions_visible"
+  | "agent_invoked"
+  | "confirming"
+  | "spine_mutating"
+  | "compiling"
+  | "live_runtime_updating"
+  | "pending_change_queued"
+  | "release_validating"
+  | "release_compiling"
+  | "release_deploying"
+  | "snapshot_updating"
+  | "spine_settled";
 
 type CardState =
-  | 'idle' | 'editing' | 'active' | 'passing' | 'error' | 'sealed_error'
-  | 'affected' | 'needs_resolution' | 'confirming' | 'sealed'
-  | 'unresolved' | 'pending' | 'analysis';
+  | "idle"
+  | "editing"
+  | "active"
+  | "passing"
+  | "error"
+  | "sealed_error"
+  | "affected"
+  | "needs_resolution"
+  | "confirming"
+  | "sealed"
+  | "unresolved"
+  | "pending"
+  | "analysis";
 
 type CardType =
-  | 'input' | 'prompt' | 'model' | 'tool' | 'memory'
-  | 'logic' | 'output' | 'eval' | 'gap';
+  | "input"
+  | "prompt"
+  | "model"
+  | "tool"
+  | "memory"
+  | "logic"
+  | "output"
+  | "eval"
+  | "gap";
 
-type PortType = 'text' | 'number' | 'boolean' | 'object' | 'array' | 'any';
+type PortType = "text" | "number" | "boolean" | "object" | "array" | "any";
 
-type MutationScope = 'live_only' | 'both';
+type MutationScope = "live_only" | "both";
 
-type GapSeverity = 'blocking' | 'warning' | 'instruction';
+type GapSeverity = "blocking" | "warning" | "instruction";
 
 interface Port {
   id: string;
@@ -312,8 +344,8 @@ interface Port {
   type: PortType;
   schema?: Record<string, PortType>;
   required: boolean;
-  direction: 'input' | 'output';
-  sensitive: boolean;   // true = values redacted in execution traces
+  direction: "input" | "output";
+  sensitive: boolean; // true = values redacted in execution traces
 }
 
 // Secrets never enter port flow — managed separately
@@ -363,22 +395,22 @@ interface SpineGraph {
 interface SpineMutation {
   cardId: string;
   mutationType:
-    | 'update_config'       // both
-    | 'update_ports'        // live_only
-    | 'update_output_schema'// live_only
-    | 'add_card'            // live_only
-    | 'remove_card'         // live_only
-    | 'add_connection'      // live_only
-    | 'remove_connection'   // live_only
-    | 'resolve_gap'         // both
-    | 'rotate_secret';      // both
+    | "update_config" // both
+    | "update_ports" // live_only
+    | "update_output_schema" // live_only
+    | "add_card" // live_only
+    | "remove_card" // live_only
+    | "add_connection" // live_only
+    | "remove_connection" // live_only
+    | "resolve_gap" // both
+    | "rotate_secret"; // both
   payload: Partial<Card> | Partial<Connection>;
   allowedIn: MutationScope;
 }
 
 interface SpineMutationProposal {
   triggeredBy: string;
-  spineGraphVersion: number;     // version at agent invocation — stale check at confirmation
+  spineGraphVersion: number; // version at agent invocation — stale check at confirmation
   mutations: SpineMutation[];
   userDescription: string;
   downstreamEffects: string[];
@@ -393,14 +425,14 @@ interface ImpactAnalysisResult {
 
 interface AffectedCard {
   cardId: string;
-  severity: 'conflict' | 'risk' | 'adjustment';
+  severity: "conflict" | "risk" | "adjustment";
   reason: string;
 }
 
 interface ResolutionSuggestion {
   affectedCardId: string;
   description: string;
-  mutationType: 'schema_update' | 'config_update' | 'connection_update';
+  mutationType: "schema_update" | "config_update" | "connection_update";
   mutation: Partial<CardConfig>;
 }
 
@@ -412,8 +444,12 @@ interface GapCardSpec {
   severity: GapSeverity;
   deferrable: boolean;
   source:
-    | 'compiler_failure' | 'analysis_timeout' | 'structural_change_in_sealed'
-    | 'agent_unresolvable' | 'pending_change_conflict' | 'deferred_design_decision';
+    | "compiler_failure"
+    | "analysis_timeout"
+    | "structural_change_in_sealed"
+    | "agent_unresolvable"
+    | "pending_change_conflict"
+    | "deferred_design_decision";
 }
 
 interface SealedSnapshot {
@@ -433,7 +469,12 @@ interface PendingChange {
   mutation: SpineMutation;
   userDescription: string;
   createdAt: number;
-  status: 'queued' | 'rebased' | 'conflicted' | 'included_in_release' | 'rejected';
+  status:
+    | "queued"
+    | "rebased"
+    | "conflicted"
+    | "included_in_release"
+    | "rejected";
 }
 
 interface RedactedSnapshot {
@@ -490,15 +531,15 @@ interface EvalResult {
 
 **Error mapping:**
 
-| Error Type | Card State | Spine Behavior |
-|-----------|-----------|---------------|
-| Model provider outage | error | Red turbulence, amber downstream |
-| Invalid API key | error | Red turbulence, secrets panel surfaces |
-| Tool timeout | error | Red turbulence on Tool Card |
-| Type validation failure | error | Red turbulence at validation point |
-| Eval failure (non-blocking) | passing with red trace | Ghost trace red, execution continues |
-| TypeScript compile error | gap | Gap Card surfaces, spine rolls back |
-| Vercel deployment failure | sealed_error | Output Card surfaces error state |
+| Error Type                  | Card State             | Spine Behavior                         |
+| --------------------------- | ---------------------- | -------------------------------------- |
+| Model provider outage       | error                  | Red turbulence, amber downstream       |
+| Invalid API key             | error                  | Red turbulence, secrets panel surfaces |
+| Tool timeout                | error                  | Red turbulence on Tool Card            |
+| Type validation failure     | error                  | Red turbulence at validation point     |
+| Eval failure (non-blocking) | passing with red trace | Ghost trace red, execution continues   |
+| TypeScript compile error    | gap                    | Gap Card surfaces, spine rolls back    |
+| Vercel deployment failure   | sealed_error           | Output Card surfaces error state       |
 
 ---
 
@@ -508,10 +549,10 @@ interface EvalResult {
 
 **Two distinct security concepts:**
 
-| Concept | What It Is | Where It Lives | Redaction |
-|---------|-----------|---------------|-----------|
-| Secret | API key, credential, token | Secrets store, Vercel env vars | Never enters port flow |
-| Sensitive field | User/customer data in port flow | Port value, execution trace | `port.sensitive: true` |
+| Concept         | What It Is                      | Where It Lives                 | Redaction              |
+| --------------- | ------------------------------- | ------------------------------ | ---------------------- |
+| Secret          | API key, credential, token      | Secrets store, Vercel env vars | Never enters port flow |
+| Sensitive field | User/customer data in port flow | Port value, execution trace    | `port.sensitive: true` |
 
 **Tool Card sandboxing:** Isolated serverless function contexts. No filesystem access. No cross-context access. Network access only to explicitly configured endpoints. Execution time limits enforced.
 
@@ -538,6 +579,7 @@ interface EvalResult {
 ## 13. Sealed-State Editing — Precise Definition
 
 **Allowed in Sealed state (config changes):**
+
 - Editing prompt text on a Prompt Card
 - Editing system prompt on a Prompt Card
 - Changing model parameters (temperature, max tokens, retry count, timeout) on a Model Card
@@ -549,6 +591,7 @@ interface EvalResult {
 - Marking port fields as sensitive
 
 **Not allowed in Sealed state (structural changes — become Gap Cards):**
+
 - Adding new cards
 - Removing existing cards
 - Adding new connections
@@ -579,10 +622,10 @@ No onboarding wizard. No template library. No natural language generation. Every
 
 ## 16. Resolved / Deferred Architectural Decisions
 
-| Decision | Status |
-|----------|--------|
-| Agent model selection | Provider choice deferred; v1 contracts remain implementation-ready and provider-agnostic |
-| Spineless hosting target | Resolved by documents 08-10 for v1 implementation |
-| Spine state persistence mechanism | Resolved by documents 08-10 for v1 implementation |
-| Eval hook framework integration | Resolved by documents 08-10 for v1 implementation |
-| Python second-phase scope | Deferred to post-v1 |
+| Decision                          | Status                                                                                   |
+| --------------------------------- | ---------------------------------------------------------------------------------------- |
+| Agent model selection             | Provider choice deferred; v1 contracts remain implementation-ready and provider-agnostic |
+| Spineless hosting target          | Resolved by documents 08-10 for v1 implementation                                        |
+| Spine state persistence mechanism | Resolved by documents 08-10 for v1 implementation                                        |
+| Eval hook framework integration   | Resolved by documents 08-10 for v1 implementation                                        |
+| Python second-phase scope         | Deferred to post-v1                                                                      |

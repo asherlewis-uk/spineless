@@ -1,4 +1,5 @@
 # Spineless — Contract Hardening
+
 **Version 2.0 | Source of Truth**
 
 ---
@@ -30,55 +31,59 @@ Document 10 is a hardening and precedence layer. It supersedes conflicting imple
 The system now maintains two distinct type namespaces. These must never be conflated in implementation.
 
 ### SystemMode
+
 The global operating mode of the spine.
 
 ```typescript
-type SystemMode = 'live' | 'sealed';
+type SystemMode = "live" | "sealed";
 ```
 
 ### LifecycleStage
+
 The current stage of the global edit/compile/deploy process. One active at a time, system-wide.
 
 ```typescript
 type LifecycleStage =
-  | 'idle'
-  | 'editing'
-  | 'impact_analysis'
-  | 'suggestions_visible'
-  | 'agent_invoked'
-  | 'confirming'
-  | 'spine_mutating'
-  | 'compiling'
-  | 'live_runtime_updating'
-  | 'pending_change_queued'
-  | 'release_validating'
-  | 'release_compiling'
-  | 'release_deploying'
-  | 'snapshot_updating'
-  | 'spine_settled';
+  | "idle"
+  | "editing"
+  | "impact_analysis"
+  | "suggestions_visible"
+  | "agent_invoked"
+  | "confirming"
+  | "spine_mutating"
+  | "compiling"
+  | "live_runtime_updating"
+  | "pending_change_queued"
+  | "release_validating"
+  | "release_compiling"
+  | "release_deploying"
+  | "snapshot_updating"
+  | "spine_settled";
 ```
 
 ### CardState
+
 The visual and functional state of an individual card. Many cards can have different CardStates simultaneously.
 
 ```typescript
 type CardState =
-  | 'idle'
-  | 'editing'
-  | 'active'
-  | 'passing'
-  | 'error'
-  | 'sealed_error'
-  | 'affected'
-  | 'needs_resolution'
-  | 'confirming'
-  | 'sealed'
-  | 'unresolved'
-  | 'pending'
-  | 'analysis';
+  | "idle"
+  | "editing"
+  | "active"
+  | "passing"
+  | "error"
+  | "sealed_error"
+  | "affected"
+  | "needs_resolution"
+  | "confirming"
+  | "sealed"
+  | "unresolved"
+  | "pending"
+  | "analysis";
 ```
 
 ### Relationship Rule
+
 `LifecycleStage` drives the global spine behavior and animation. `CardState` drives individual card visual rendering. They are related but independent:
 
 - When `LifecycleStage` is `agent_invoked`, the triggering card's `CardState` remains `editing` until the proposal arrives, at which point it transitions to `confirming`
@@ -92,6 +97,7 @@ The renderer subscribes to both independently. UI components that render card su
 ## 2. PendingChange Rebase and Conflict Rules
 
 ### The Problem
+
 A user queues a `PendingChange` in Sealed state, returns to Live, structurally modifies or deletes the affected card, then Seals again. The old `PendingChange` references a card or config path that no longer exists in its original form.
 
 ### Updated PendingChange Contract
@@ -99,18 +105,18 @@ A user queues a `PendingChange` in Sealed state, returns to Live, structurally m
 ```typescript
 interface PendingChange {
   id: string;
-  baseSnapshotId: string;          // SealedSnapshot ID when change was queued
-  targetCardId: string;            // card the change targets
-  targetConfigPath: string;        // dot-notation path within CardConfig
+  baseSnapshotId: string; // SealedSnapshot ID when change was queued
+  targetCardId: string; // card the change targets
+  targetConfigPath: string; // dot-notation path within CardConfig
   mutation: SpineMutation;
   userDescription: string;
   createdAt: number;
   status:
-    | 'queued'                     // waiting for Release
-    | 'rebased'                    // target changed but change safely remapped
-    | 'conflicted'                 // target deleted or structurally incompatible
-    | 'included_in_release'        // applied in a Release
-    | 'rejected';                  // user explicitly rejected
+    | "queued" // waiting for Release
+    | "rebased" // target changed but change safely remapped
+    | "conflicted" // target deleted or structurally incompatible
+    | "included_in_release" // applied in a Release
+    | "rejected"; // user explicitly rejected
 }
 ```
 
@@ -134,7 +140,9 @@ Status becomes `conflicted`. Same Gap Card behavior as Rule 3.
 Status becomes `included_in_release` with a no-op flag. The change is recorded as applied but produces no mutation. No user action required.
 
 ### User-Visible Queue Management
+
 The user can inspect and reject individual `PendingChange` entries from the Output Card face in Sealed state. Each queued change shows:
+
 - Card name
 - Plain-language description of the change
 - Current status
@@ -151,10 +159,12 @@ The PendingChange queue is preserved on Return to Live. Successful Release clear
 ### The Clean Separation
 
 **Prompt Card** is a declaration. It does not execute anything. It defines:
+
 - The prompt template (text with variable bindings)
 - The expected output schema (typed fields)
 
 **Model Card** is the executor. It:
+
 - Receives the compiled prompt from its connected Prompt Card
 - Executes the LLM call
 - Validates and structures the output against the Prompt Card's declared output schema
@@ -168,20 +178,20 @@ Downstream cards consume **Model Card output**, not Prompt Card output. The Prom
 // Prompt Card declares — compile-time only
 interface PromptDeclaration {
   template: string;
-  variables: Record<string, PortType>;       // input variable types
+  variables: Record<string, PortType>; // input variable types
   declaredOutputSchema: Record<string, PortType>; // what Model Card must produce
 }
 
 // Edge payload from Prompt Card to Model Card — runtime
 interface PromptToModelPayload {
-  compiledPrompt: string;                    // template with variables resolved
+  compiledPrompt: string; // template with variables resolved
   declaredOutputSchema: Record<string, PortType>;
 }
 
 // Model Card produces — runtime output
 interface ModelOutputPayload {
-  values: Record<string, unknown>;           // typed against declaredOutputSchema
-  rawResponse?: string;                      // not persisted if any declared output field is sensitive unless schema-redacted; never user-facing
+  values: Record<string, unknown>; // typed against declaredOutputSchema
+  rawResponse?: string; // not persisted if any declared output field is sensitive unless schema-redacted; never user-facing
   tokenUsage: { input: number; output: number };
   latencyMs: number;
   cost: number;
@@ -201,6 +211,7 @@ If the model produces output that does not match the declared schema, the Model 
 ## 4. Eval Execution Model — Fully Async (Option B)
 
 ### Decision
+
 Eval evaluation is fully asynchronous. It runs completely off the execution path. Zero latency is added to the execution chain by Eval Cards.
 
 ### Correct Generated Pattern
@@ -209,17 +220,16 @@ Eval evaluation is fully asynchronous. It runs completely off the execution path
 // Generated Eval middleware — fully async, zero execution latency
 async function evalMiddleware_A_to_B(
   aOutput: AOutput,
-  evalId: string
+  evalId: string,
 ): Promise<AOutput> {
-
   // Fire and forget — no await, no execution chain delay
   void evalEngine
     .evaluate({
       evalId,
       output: aOutput,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
-    .then(result => evalEngine.stream(evalId, result))
+    .then((result) => evalEngine.stream(evalId, result))
     .catch(() => evalEngine.recordTelemetryGap(evalId));
 
   // Return immediately — Card B receives output without waiting for eval
@@ -228,11 +238,12 @@ async function evalMiddleware_A_to_B(
 
 // In the generated execution chain:
 const aOutput = await cardA_execute(input);
-const passthrough = await evalMiddleware_A_to_B(aOutput, 'eval_uuid');
+const passthrough = await evalMiddleware_A_to_B(aOutput, "eval_uuid");
 const bOutput = await cardB_execute(passthrough);
 ```
 
 ### Guarantees Under This Model
+
 - Card A executes exactly once
 - Card B receives output immediately after Card A completes — no eval latency
 - Eval results arrive on the Eval Card face asynchronously, typically within 200-500ms of the execution step completing
@@ -240,6 +251,7 @@ const bOutput = await cardB_execute(passthrough);
 - Eval results never retroactively affect an already-completed execution — they inform future suggestions only
 
 ### Eval Card Visual Behavior Under Async Model
+
 - During execution: the Eval Card ribbon shows a subtle processing animation — distinct from pass/fail
 - After eval result arrives (asynchronously): ribbon updates to pass (teal) or fail (red turbulence)
 - If multiple executions complete before eval results arrive: results are applied to their corresponding ghost traces, not the current active state
@@ -251,6 +263,7 @@ const bOutput = await cardB_execute(passthrough);
 Two gestures serve different authoring moments. Both are canonical.
 
 ### Gesture A — Port Label Affordance (Guided)
+
 For unconnected output ports, a subtle label renders directly on the port:
 
 ```
@@ -262,17 +275,20 @@ For unconnected output ports, a subtle label renders directly on the port:
 The label shows the most contextually appropriate downstream card type based on the current card type and port type.
 
 **Clicking the label:**
+
 1. The suggested card type materializes inline in the spine immediately below the current card
 2. A connection forms automatically between the output port and the new card's input port
 3. The new card enters `editing` state immediately — the user zooms in to configure it
 4. The label disappears — the port is now connected
 
 **When it appears:**
+
 - Any unconnected output port in Live state
 - Does not appear in Sealed state
 - Does not appear on ports with type `any` where no suggestion is unambiguous
 
 ### Gesture B — Drag to Void (Experienced)
+
 Dragging from any output port into empty spine space:
 
 1. A drag trail follows the cursor — a thin ribbon of light extending from the port
@@ -282,17 +298,20 @@ Dragging from any output port into empty spine space:
 5. The new card enters `editing` state immediately
 
 **Card Picker Appearance:**
+
 - Floats at the drop point, dark surface, card type options as labeled tiles
 - Maximum 6 options shown (all compatible types)
 - Selecting dismisses the picker and materializes the card
 - Pressing Escape or clicking void dismisses without creating
 
 **When it appears:**
+
 - Any output port drag in Live state
 - Does not appear in Sealed state
 - Available on all card types including Logic Card branch outputs
 
 ### First Card — Input Card Special Case
+
 The spine opens with a single Input Card in unconfigured state. No port label appears on the Input Card's output port until the card is configured with at least one field. Once configured, the port label appears: "Connect to a Prompt →"
 
 This prevents the user from wiring an unconfigured Input Card and producing a typed mismatch immediately.
@@ -308,7 +327,7 @@ Every `SpineMutationProposal` is bound to the spine graph version that existed w
 ```typescript
 interface SpineMutationProposal {
   triggeredBy: string;
-  spineGraphVersion: number;          // version at agent invocation time
+  spineGraphVersion: number; // version at agent invocation time
   mutations: SpineMutation[];
   userDescription: string;
   downstreamEffects: string[];
@@ -316,16 +335,20 @@ interface SpineMutationProposal {
 ```
 
 ### Stale Proposal Detection
+
 At confirmation time, the system checks `proposal.spineGraphVersion` against `currentSpineGraph.version`.
 
 If they differ — meaning the spine was mutated between agent invocation and user confirmation — the server rejects the proposal as stale:
+
 - Card returns to the latest persisted confirmed state
 - User sees on the card face: "This change is no longer valid — the system was updated while you were reviewing. Your edit was not lost — it will restart automatically."
 - The edit that triggered the stale proposal re-enters `editing` state with the user's previous edit pre-populated
 - The user can re-commit or discard
 
 ### Multi-Tab Rule
+
 Spineless is a single-session product in v1. If the user opens Spineless in a second tab:
+
 - The second tab renders the spine in read-only view mode
 - A banner appears: "This spine is open in another window. Close that window to edit here."
 - The second tab can scroll, zoom, and inspect but cannot edit
@@ -334,20 +357,21 @@ Spineless is a single-session product in v1. If the user opens Spineless in a se
 This prevents concurrent spine mutations from different browser contexts without requiring complex CRDT or operational transform infrastructure in v1.
 
 ### Server-Side Version Guard
+
 Every mutation request from the client includes the `clientSpineVersion` the client believes is current. The server rejects any mutation where the client version does not match the server's current version:
 
 ```typescript
 interface MutationRequest {
   spineId: string;
-  clientSpineVersion: number;        // must match server's current version
+  clientSpineVersion: number; // must match server's current version
   proposal: SpineMutationProposal;
 }
 
 // Server response on version mismatch:
 interface MutationRejection {
-  reason: 'version_mismatch';
+  reason: "version_mismatch";
   serverVersion: number;
-  latestSpineGraph: SpineGraph;      // client rehydrates from this
+  latestSpineGraph: SpineGraph; // client rehydrates from this
 }
 ```
 
@@ -367,15 +391,15 @@ interface ExecutionStep {
   latencyMs: number;
   tokens?: { input: number; output: number };
   cost?: number;
-  inputSnapshot: RedactedSnapshot;      // redacted input snapshot
-  outputSnapshot: RedactedSnapshot;     // redacted output snapshot
+  inputSnapshot: RedactedSnapshot; // redacted input snapshot
+  outputSnapshot: RedactedSnapshot; // redacted output snapshot
   evalResult?: EvalResult;
 }
 
 interface RedactedSnapshot {
-  schema: Record<string, PortType>;    // field names and types — always stored
-  values: Record<string, unknown>;     // actual values — stored per redaction rules
-  redactedFields: string[];            // fields that were omitted from values
+  schema: Record<string, PortType>; // field names and types — always stored
+  values: Record<string, unknown>; // actual values — stored per redaction rules
+  redactedFields: string[]; // fields that were omitted from values
 }
 ```
 
@@ -413,8 +437,8 @@ interface Port {
   type: PortType;
   schema?: Record<string, PortType>;
   required: boolean;
-  direction: 'input' | 'output';
-  sensitive: boolean;                  // added — redacted in traces when true
+  direction: "input" | "output";
+  sensitive: boolean; // added — redacted in traces when true
 }
 ```
 
@@ -426,30 +450,31 @@ interface Port {
 
 ```typescript
 type GapSeverity =
-  | 'blocking'      // prevents compilation or Release — must be resolved
-  | 'warning'       // system can proceed, but behavior may be degraded
-  | 'instruction';  // navigation or guidance — informs without blocking
+  | "blocking" // prevents compilation or Release — must be resolved
+  | "warning" // system can proceed, but behavior may be degraded
+  | "instruction"; // navigation or guidance — informs without blocking
 
 interface GapCardSpec {
   insertAfterCardId: string;
-  question: string;                    // plain language — what needs deciding
-  context: string;                     // why the gap exists
-  suggestedAction: string;             // what the user should do
+  question: string; // plain language — what needs deciding
+  context: string; // why the gap exists
+  suggestedAction: string; // what the user should do
   severity: GapSeverity;
-  deferrable: boolean;                 // can the user dismiss without resolving?
-  source:                              // what created this Gap Card
-    | 'compiler_failure'
-    | 'analysis_timeout'
-    | 'structural_change_in_sealed'
-    | 'agent_unresolvable'
-    | 'pending_change_conflict'
-    | 'deferred_design_decision';
+  deferrable: boolean; // can the user dismiss without resolving?
+  source: // what created this Gap Card
+    | "compiler_failure"
+    | "analysis_timeout"
+    | "structural_change_in_sealed"
+    | "agent_unresolvable"
+    | "pending_change_conflict"
+    | "deferred_design_decision";
 }
 ```
 
 ### Severity Behavior Rules
 
 **Blocking:**
+
 - Compilation cannot proceed while a blocking Gap Card exists
 - Release cannot proceed while a blocking Gap Card exists
 - The Gap Card cannot be deferred — `deferrable: false` always
@@ -457,6 +482,7 @@ interface GapCardSpec {
 - Examples: compiler TypeScript error, pending change conflict, analysis timeout on critical path
 
 **Warning:**
+
 - Compilation and Release proceed despite the gap
 - Execution proceeds but may be degraded (e.g., missing memory store, optional tool unavailable)
 - The Gap Card can be deferred — `deferrable: true`
@@ -464,6 +490,7 @@ interface GapCardSpec {
 - Examples: memory store unavailable, optional tool credentials missing, eval baseline not yet established
 
 **Instruction:**
+
 - Purely navigational — tells the user what to do next, does not represent a system failure
 - Always deferrable
 - Automatically dismissed when the user takes the suggested action
@@ -474,10 +501,10 @@ interface GapCardSpec {
 
 ```typescript
 interface GapCard extends Card {
-  type: 'gap';
+  type: "gap";
   spec: GapCardSpec;
   resolvedAt?: number;
-  resolvedBy?: 'user_action' | 'deferred' | 'auto_resolved';
+  resolvedBy?: "user_action" | "deferred" | "auto_resolved";
 }
 ```
 
@@ -519,5 +546,5 @@ The following confirms every major contract ambiguity is now resolved:
 
 ---
 
-*Spineless Contract Hardening. Version 1.0. April 2026.*
-*This document completes the Spineless v1 documentation set.*
+_Spineless Contract Hardening. Version 1.0. April 2026._
+_This document completes the Spineless v1 documentation set._

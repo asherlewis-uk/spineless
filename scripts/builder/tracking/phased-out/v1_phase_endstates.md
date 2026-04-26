@@ -13,6 +13,7 @@
 The deterministic core. Everything downstream derives from this. Pure logic, no rendering, no compilation, no agent.
 
 ### Endstate criteria
+
 1. All canonical types from docs 09 and 10 are implemented in TypeScript: `SystemMode`, `LifecycleStage`, `CardState`, `CardType` (the nine v1 types — Parser Card explicitly absent), `SpineGraph`, `Card`, `Port`, `PortType` (no `'secret'` member), `Connection`, `SpineMutation`, `MutationScope`, `SpineMutationProposal`, `MutationRejection`, `GapCardSpec`, `CardSecretReference`, `PendingChange`, `SealedSnapshot`, `ModelOutputPayload`, `RedactedSnapshot`.
 2. The `LifecycleStage` and `CardState` namespaces are independently subscribable. No code path infers one from the other. The shared `'editing'` literal is correctly disambiguated by namespace at every consumer.
 3. The spine graph is versioned: every confirmed mutation produces a new `spineGraphVersion`, with the prior version retained.
@@ -32,6 +33,7 @@ The deterministic core. Everything downstream derives from this. Pure logic, no 
 The storage and security layer that the rest of the system writes through. Built before any user-facing surface so that retention, redaction, and secret-isolation are structural, not retrofitted.
 
 ### Endstate criteria
+
 1. Spine graph state, `SealedSnapshot` (current and history), and `PendingChange` queue persist to the Spineless cloud database with the retention semantics in doc 08 §Persistence.
 2. Execution traces and ghost trace data persist on a 30-day rolling window. Eval results and cost/latency history persist on a 90-day rolling window. Eviction is automatic and tested.
 3. `RedactedSnapshot.values` is encrypted at rest with a per-user key. Users do not manage keys directly. Key rotation is supported at the storage boundary.
@@ -56,6 +58,7 @@ The storage and security layer that the rest of the system writes through. Built
 The deterministic generator from spine state to Next.js/TypeScript artifacts, plus the sandbox that runs them for Live mode.
 
 ### Endstate criteria
+
 1. All nine compilation stages are implemented as a strictly ordered pipeline: `VALIDATE_GRAPH` → `RESOLVE_EXECUTION_ORDER` → `INFER_SCHEMAS` → `GENERATE_COMPILATION_PLAN` → `GENERATE_SOURCE_ARTIFACTS` → `TYPECHECK` → `UPDATE_RUNTIME` → `PERSIST_SNAPSHOT` → `SURFACE_RESULT`.
 2. Stage 1 failures surface `GapCardSpec` at the offending card or connection and abort the pipeline without mutating spine state.
 3. Stage 6 failures roll back the spine mutation atomically — no partial version commit, no orphaned snapshot — and surface a `GapCardSpec` at the responsible card within the 16ms target.
@@ -75,6 +78,7 @@ The deterministic generator from spine state to Next.js/TypeScript artifacts, pl
 The reasoning layer. Proposes mutations; never writes them. Analyzes impact; never blocks the UI.
 
 ### Endstate criteria
+
 1. The Impact Analysis Engine is invoked within 16ms of a card edit commit event and completes within 100ms for spines ≤ 50 cards. Beyond 50 cards, results stream progressively per affected card.
 2. Impact analysis runs off the UI thread. No analysis path can block input handling, animation, or rendering frames.
 3. The Agent Runtime is invoked only after the user resolves or dismisses every surfaced suggestion. It cannot be triggered while suggestions are still visible.
@@ -93,6 +97,7 @@ The reasoning layer. Proposes mutations; never writes them. Analyzes impact; nev
 The void, the spine, the materials, the animation. Subscribes to `LifecycleStage` for global animation and to spine geometry for layout. Does not host card interaction surfaces (those land in Phase 6).
 
 ### Endstate criteria
+
 1. The renderer subscribes only to `LifecycleStage` and spine geometry. It does not read `CardState` and does not import card-interaction modules.
 2. Spatial grammar is implemented as specified: scroll position = execution depth, branching = parallel vertical tracks that rejoin at a merge point, z-depth = abstraction level with parallax, zoom = inspection level. The spine never widens except via Logic Card branches.
 3. The void renders as a near-black environment with organic ambient drift. No floors, walls, ceilings, external light sources, fog, smoke, or chrome are ever emitted by any code path. All light originates from within UI elements.
@@ -115,6 +120,7 @@ The void, the spine, the materials, the animation. Subscribes to `LifecycleStage
 The HTML overlay on the WebGL canvas. Subscribes to `CardState` only. Hosts every direct user interaction with cards, ports, ribbons, and the picker.
 
 ### Endstate criteria
+
 1. The interaction layer subscribes only to `CardState` and per-card geometry from the renderer. It does not read `LifecycleStage`.
 2. All eight non-Gap card types render the canonical empty-state label when unconfigured. Gap Cards render no empty-state label. No onboarding flow, wizard, modal, tooltip, or template selector exists anywhere in first-run.
 3. First open shows the void with a single unconfigured Input Card and nothing else.
@@ -137,6 +143,7 @@ The HTML overlay on the WebGL canvas. Subscribes to `CardState` only. Hosts ever
 The production boundary. Seal, queue, rebase, release, deploy, and return-to-Live.
 
 ### Endstate criteria
+
 1. Seal transitions execute the crystallization animation, freeze structural mutations, and produce a `SealedSnapshot` persisted to the database.
 2. The `PendingChange` queue accepts `update_config`, `resolve_gap`, and `rotate_secret` mutations in Sealed mode and rejects all `live_only` mutation types via the Phase 1 contract.
 3. Rebase rules 1–5 from Phase 2 are invoked before every Release. `conflicted` entries surface as Gap Cards on the relevant cards and block Release until resolved or rejected from the Output Card face.

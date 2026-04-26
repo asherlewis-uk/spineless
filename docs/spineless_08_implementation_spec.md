@@ -1,4 +1,5 @@
 # Spineless — Implementation State & Interaction Spec
+
 **Version 2.0 | Source of Truth**
 
 ---
@@ -6,15 +7,19 @@
 ## 1. State Machine — Complete
 
 ### Live State Edit Path
+
 See Architecture Contract (07), Section 2. Canonical reference.
 
 ### Sealed State Edit Path
+
 See Architecture Contract (07), Section 2. Canonical reference.
 
 ### Release Path
+
 See Architecture Contract (07), Section 2. Canonical reference.
 
 ### Return to Live Path
+
 See Architecture Contract (07), Section 2. Canonical reference.
 
 ---
@@ -24,19 +29,39 @@ See Architecture Contract (07), Section 2. Canonical reference.
 See documents 09 and 10 for the consolidated implementation contracts. Key types for this document:
 
 ```typescript
-type SystemMode = 'live' | 'sealed';
+type SystemMode = "live" | "sealed";
 
 type LifecycleStage =
-  | 'idle' | 'editing' | 'impact_analysis' | 'suggestions_visible'
-  | 'agent_invoked' | 'confirming' | 'spine_mutating' | 'compiling'
-  | 'live_runtime_updating' | 'pending_change_queued'
-  | 'release_validating' | 'release_compiling'
-  | 'release_deploying' | 'snapshot_updating' | 'spine_settled';
+  | "idle"
+  | "editing"
+  | "impact_analysis"
+  | "suggestions_visible"
+  | "agent_invoked"
+  | "confirming"
+  | "spine_mutating"
+  | "compiling"
+  | "live_runtime_updating"
+  | "pending_change_queued"
+  | "release_validating"
+  | "release_compiling"
+  | "release_deploying"
+  | "snapshot_updating"
+  | "spine_settled";
 
 type CardState =
-  | 'idle' | 'editing' | 'active' | 'passing' | 'error' | 'sealed_error'
-  | 'affected' | 'needs_resolution' | 'confirming' | 'sealed'
-  | 'unresolved' | 'pending' | 'analysis';
+  | "idle"
+  | "editing"
+  | "active"
+  | "passing"
+  | "error"
+  | "sealed_error"
+  | "affected"
+  | "needs_resolution"
+  | "confirming"
+  | "sealed"
+  | "unresolved"
+  | "pending"
+  | "analysis";
 ```
 
 **Critical distinction:** `LifecycleStage` is the single global process state — one active at a time, system-wide. `CardState` is the visual and functional state of an individual card — many cards can have different `CardState` values simultaneously. The renderer subscribes to both independently. UI components rendering card surfaces subscribe to `CardState` only. Components rendering global spine animation subscribe to `LifecycleStage` only.
@@ -45,24 +70,24 @@ type CardState =
 
 These are per-card visual/functional states only. Global edit, compile, queue, and release progress uses `LifecycleStage`, not `CardState`.
 
-| From | To | Trigger |
-|------|----|---------|
-| idle | editing | user focuses card |
-| editing | analysis | user commits edit |
-| analysis | confirming | agent returns proposal for triggering card |
-| analysis | affected | upstream edit affects this card |
-| analysis | idle | impact analysis completes with no card-level visual issue |
-| confirming | idle | user rejects proposal |
-| confirming | idle (with gap) | user confirms, compilation fails |
-| confirming | pending | user confirms, system is Sealed |
-| confirming | idle | user confirms, Live, compilation succeeds |
-| error | idle | user acknowledges error |
-| sealed_error | sealed | user retries or dismisses |
-| affected | idle | upstream resolution applied |
-| affected | needs_resolution | user rejects suggested resolution |
-| needs_resolution | confirming | user manually resolves and agent returns proposal |
-| pending | idle | Release clears queue |
-| unresolved | idle | user resolves or defers Gap Card |
+| From             | To               | Trigger                                                   |
+| ---------------- | ---------------- | --------------------------------------------------------- |
+| idle             | editing          | user focuses card                                         |
+| editing          | analysis         | user commits edit                                         |
+| analysis         | confirming       | agent returns proposal for triggering card                |
+| analysis         | affected         | upstream edit affects this card                           |
+| analysis         | idle             | impact analysis completes with no card-level visual issue |
+| confirming       | idle             | user rejects proposal                                     |
+| confirming       | idle (with gap)  | user confirms, compilation fails                          |
+| confirming       | pending          | user confirms, system is Sealed                           |
+| confirming       | idle             | user confirms, Live, compilation succeeds                 |
+| error            | idle             | user acknowledges error                                   |
+| sealed_error     | sealed           | user retries or dismisses                                 |
+| affected         | idle             | upstream resolution applied                               |
+| affected         | needs_resolution | user rejects suggested resolution                         |
+| needs_resolution | confirming       | user manually resolves and agent returns proposal         |
+| pending          | idle             | Release clears queue                                      |
+| unresolved       | idle             | user resolves or defers Gap Card                          |
 
 ---
 
@@ -72,15 +97,15 @@ These are per-card visual/functional states only. Global edit, compile, queue, a
 interface SpineMutation {
   cardId: string;
   mutationType:
-    | 'update_config'        // both — allowed in Live and Sealed
-    | 'update_ports'         // live_only
-    | 'update_output_schema' // live_only
-    | 'add_card'             // live_only
-    | 'remove_card'          // live_only
-    | 'add_connection'       // live_only
-    | 'remove_connection'    // live_only
-    | 'resolve_gap'          // both
-    | 'rotate_secret';       // both
+    | "update_config" // both — allowed in Live and Sealed
+    | "update_ports" // live_only
+    | "update_output_schema" // live_only
+    | "add_card" // live_only
+    | "remove_card" // live_only
+    | "add_connection" // live_only
+    | "remove_connection" // live_only
+    | "resolve_gap" // both
+    | "rotate_secret"; // both
   payload: Partial<Card> | Partial<Connection>;
   allowedIn: MutationScope;
 }
@@ -147,11 +172,13 @@ Every `SpineMutationProposal` is bound to `spineGraphVersion` at agent invocatio
 **Port creation:** Input ports created when `{variable}` syntax used in prompt text — variable name becomes port label, type defaults to `text`. Output ports created through output schema builder — each field becomes a declared output port.
 
 **Validation:**
+
 - Empty text → empty state label shown, port cannot connect
 - Text present, no output schema → amber: "Define what this prompt returns"
 - Text and schema present → fully configured
 
 **Confirmation panel shows:**
+
 - Before: first 80 characters of previous prompt text
 - After: first 80 characters of new prompt text
 - Change summary: agent-generated plain-language description
@@ -171,6 +198,7 @@ Every `SpineMutationProposal` is bound to `spineGraphVersion` at agent invocatio
 **Port creation:** Single input port created automatically. Single output port derived from connected Prompt Card's declared output schema.
 
 **Validation:**
+
 - No model selected → empty state label
 - Model selected, no API key → secrets panel surfaces inline: "This model needs an API key"
 - Model selected, API key present → configured, cost-per-run visible
@@ -190,6 +218,7 @@ Every `SpineMutationProposal` is bound to `spineGraphVersion` at agent invocatio
 **Port creation:** Input and output ports created manually through port builder on card face.
 
 **Validation:**
+
 - No name or execution target → empty state label
 - Name and target, no ports → amber: "Define what this tool accepts and returns"
 - Fully configured → shows tool name and port count
@@ -209,6 +238,7 @@ Every `SpineMutationProposal` is bound to `spineGraphVersion` at agent invocatio
 **Port creation:** Single input port (accepts upstream output). Single output port typed to match retention strategy.
 
 **Validation:**
+
 - No strategy → empty state label
 - Strategy selected, external store required but not connected → secrets panel: "Connect a store"
 - Fully configured → shows strategy name and fill level indicator
@@ -228,6 +258,7 @@ Every `SpineMutationProposal` is bound to `spineGraphVersion` at agent invocatio
 **Port creation:** Single input port. One output port per defined branch, labeled with condition summary.
 
 **Validation:**
+
 - No condition → empty state label
 - Condition references variable not in upstream schema → red: "Variable not found: {name}"
 - Valid condition, fewer than two output connections → amber: "Connect at least two branches"
@@ -264,6 +295,7 @@ Every `SpineMutationProposal` is bound to `spineGraphVersion` at agent invocatio
 **Port creation:** Single input port. No output ports — Output Card is a terminal node.
 
 **Validation:**
+
 - No destination → empty state label
 - Destination selected, credentials required but absent → secrets panel surfaces inline
 - Fully configured → shows destination and format
@@ -283,6 +315,7 @@ Every `SpineMutationProposal` is bound to `spineGraphVersion` at agent invocatio
 **Port creation:** No traditional ports. Eval Cards wrap a connection, not a card. Types inherited from the wrapped connection.
 
 **Validation:**
+
 - No examples → empty state label
 - Examples present → shows example count and current pass rate
 
@@ -307,11 +340,13 @@ No empty state label — system-generated only.
 ## 9. Confirmation State Specification
 
 ### Card Visual
+
 **Back layer (current):** Card surface dims to 40% opacity. Current configuration visible but grayed.
 
 **Front layer (proposed):** Full opacity. Proposed configuration rendered. Changed elements with subtle amber outline.
 
 ### Confirmation Panel
+
 ```
 ─────────────────────────────────────────
 [Change summary — plain language, 1-2 sentences]
@@ -356,17 +391,18 @@ Also affects:
 
 ## 11. Gap Card Severity Behavior
 
-| Severity | Compilation | Release | Deferrable | Visual |
-|----------|------------|---------|-----------|--------|
-| Blocking | Cannot proceed | Cannot proceed | No | Full violet-white flicker, connections severed visually |
-| Warning | Proceeds | Proceeds | Yes | Amber pulse, present but not alarming |
-| Instruction | Proceeds | Proceeds | Yes, auto-dismisses | Soft neutral guidance glow |
+| Severity    | Compilation    | Release        | Deferrable          | Visual                                                  |
+| ----------- | -------------- | -------------- | ------------------- | ------------------------------------------------------- |
+| Blocking    | Cannot proceed | Cannot proceed | No                  | Full violet-white flicker, connections severed visually |
+| Warning     | Proceeds       | Proceeds       | Yes                 | Amber pulse, present but not alarming                   |
+| Instruction | Proceeds       | Proceeds       | Yes, auto-dismisses | Soft neutral guidance glow                              |
 
 ---
 
 ## 12. Card Creation Gestures
 
 ### Gesture A — Port Label Affordance (Guided)
+
 Unconnected output ports show a subtle label: "Connect to a [suggested type] →". Clicking creates the suggested card type inline immediately below the current card, connects automatically, new card enters `editing` state.
 
 **Appears:** Any unconnected output port in Live state. Not in Sealed state. Not on `any` type ports where no suggestion is unambiguous.
@@ -374,6 +410,7 @@ Unconnected output ports show a subtle label: "Connect to a [suggested type] →
 **First card special case:** Input Card port label does not appear until at least one field is configured.
 
 ### Gesture B — Drag to Void (Experienced)
+
 Dragging from any output port into empty spine space trails a ribbon of light from the port. Releasing on void opens an inline card picker at the drop point showing only compatible downstream card types. Selecting creates the card at the drop point and connects automatically. New card enters `editing` state.
 
 **Picker dismissal:** Pressing Escape or clicking void while picker is open cancels creation — no card created.
@@ -395,6 +432,7 @@ Dragging from any output port into empty spine space trails a ribbon of light fr
 ## 14. Engineering Acceptance Criteria
 
 ### Edit Lifecycle
+
 - [ ] Card edit commits trigger impact analysis within 16ms of commit event
 - [ ] Impact analysis completes in <100ms for spines ≤50 cards
 - [ ] Impact analysis streams progressively for spines >50 cards
@@ -407,6 +445,7 @@ Dragging from any output port into empty spine space trails a ribbon of light fr
 - [ ] Gap Card surfaces within 16ms of compilation failure detection
 
 ### Sealed State
+
 - [ ] Structural card controls visually locked and non-interactive in Sealed state
 - [ ] Config card controls remain interactive in Sealed state
 - [ ] Confirmed Sealed edits create PendingChange entries, never mutate SealedSnapshot
@@ -415,6 +454,7 @@ Dragging from any output port into empty spine space trails a ribbon of light fr
 - [ ] Structural mutation proposals in Sealed state converted to Gap Cards by agent
 
 ### PendingChange Queue
+
 - [ ] Queue preserved when returning to Live state
 - [ ] Queue indicator visible in Live state when pending changes exist
 - [ ] Release validates queue before attempting compilation
@@ -423,6 +463,7 @@ Dragging from any output port into empty spine space trails a ribbon of light fr
 - [ ] User shown count: "X queued production changes will apply on your next release"
 
 ### Eval Cards
+
 - [ ] Eval middleware executes Card A exactly once per execution job
 - [ ] evalEngine stream is fire-and-forget — never blocks execution chain
 - [ ] Eval infrastructure unavailability does not block execution
@@ -431,6 +472,7 @@ Dragging from any output port into empty spine space trails a ribbon of light fr
 - [ ] Drift detection runs on rolling window, amber state triggers at configured threshold
 
 ### Deployment
+
 - [ ] Seal triggers Vercel deployment via API, not manual user action
 - [ ] Production URL surfaces on Output Card within 30 seconds of Seal confirmation
 - [ ] Vercel failure surfaces sealed_error on Output Card, never raw API error
@@ -438,6 +480,7 @@ Dragging from any output port into empty spine space trails a ribbon of light fr
 - [ ] Secrets pushed to Vercel as environment variables, never embedded in source
 
 ### Ghost Traces
+
 - [ ] Ghost trace renders within 500ms of execution job completion
 - [ ] Ghost traces fade linearly over 30 seconds of display time
 - [ ] Maximum 10 ghost traces rendered simultaneously per connection
@@ -445,6 +488,7 @@ Dragging from any output port into empty spine space trails a ribbon of light fr
 - [ ] Ghost traces removed when older than 30 days
 
 ### Version Locking
+
 - [ ] Every SpineMutationProposal bound to spineGraphVersion at invocation
 - [ ] Stale proposals rejected at confirmation time if version differs
 - [ ] User's edit pre-populated on stale rejection — not discarded
@@ -457,38 +501,41 @@ Dragging from any output port into empty spine space trails a ribbon of light fr
 ## 15. Interaction Behaviors
 
 ### Card Interactions
-| Interaction | Behavior |
-|-------------|---------|
-| Click card (idle) | Zooms spine to card, surface magnifies for editing |
-| Click void (zoomed) | Zooms back out to spine view |
-| Scroll (spine view) | Moves camera through spine depth |
-| Pinch out (trackpad) | Zooms to full overview |
-| Pinch in (overview) | Zooms back to spine view at pinch center |
-| Click card (overview) | Snaps to card at full zoom |
-| Right-click connection | Radial: Wrap with Eval / Remove |
-| Drag from output port | Initiates connection — compatible input ports highlighted |
-| Drop on compatible input port | Creates connection if types match |
-| Drop on void | Opens compatible card picker at drop point |
-| Escape while picker open | Cancels — no card created |
-| Click void while picker open | Cancels — no card created |
-| Escape (editing) | Discards edit, returns to idle |
-| Enter (editing) | Commits edit (single-line fields) |
-| Cmd+Enter (editing) | Commits edit (multi-line fields) |
-| Escape (confirming) | Rejects proposal |
-| Enter (confirming) | Confirms proposal |
-| Click port label | Creates suggested card type, connects automatically |
+
+| Interaction                   | Behavior                                                  |
+| ----------------------------- | --------------------------------------------------------- |
+| Click card (idle)             | Zooms spine to card, surface magnifies for editing        |
+| Click void (zoomed)           | Zooms back out to spine view                              |
+| Scroll (spine view)           | Moves camera through spine depth                          |
+| Pinch out (trackpad)          | Zooms to full overview                                    |
+| Pinch in (overview)           | Zooms back to spine view at pinch center                  |
+| Click card (overview)         | Snaps to card at full zoom                                |
+| Right-click connection        | Radial: Wrap with Eval / Remove                           |
+| Drag from output port         | Initiates connection — compatible input ports highlighted |
+| Drop on compatible input port | Creates connection if types match                         |
+| Drop on void                  | Opens compatible card picker at drop point                |
+| Escape while picker open      | Cancels — no card created                                 |
+| Click void while picker open  | Cancels — no card created                                 |
+| Escape (editing)              | Discards edit, returns to idle                            |
+| Enter (editing)               | Commits edit (single-line fields)                         |
+| Cmd+Enter (editing)           | Commits edit (multi-line fields)                          |
+| Escape (confirming)           | Rejects proposal                                          |
+| Enter (confirming)            | Confirms proposal                                         |
+| Click port label              | Creates suggested card type, connects automatically       |
 
 ### Keyboard Shortcuts
-| Shortcut | Action |
-|---------|--------|
-| Space | Toggle between spine view and full overview |
-| Escape | Zoom out one level |
-| Cmd+Z | Undo last confirmed change (Live state only) |
-| Cmd+Shift+Z | Redo (Live state only) |
+
+| Shortcut    | Action                                       |
+| ----------- | -------------------------------------------- |
+| Space       | Toggle between spine view and full overview  |
+| Escape      | Zoom out one level                           |
+| Cmd+Z       | Undo last confirmed change (Live state only) |
+| Cmd+Shift+Z | Redo (Live state only)                       |
 
 ### Undo / Redo
+
 Operates on confirmed spine mutations — not in-progress edits. Each undo reverts the spine graph to the previous versioned state and recompiles. Available in Live state only. Not available in Sealed state — use PendingChange queue to correct Sealed edits.
 
 ---
 
-*Spineless Implementation State & Interaction Spec. Version 2.0. April 2026.*
+_Spineless Implementation State & Interaction Spec. Version 2.0. April 2026._
