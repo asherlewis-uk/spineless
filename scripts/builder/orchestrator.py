@@ -104,6 +104,43 @@ def load_spec_documents(docs_dir: Path) -> str:
         parts.append("")
     return "\n".join(parts)
 
+# ── Preflight ─────────────────────────────────────────────────────────────────
+
+
+def assert_ollama_models_available(models: list[str]) -> None:
+    """Verify the Ollama daemon is reachable and all required models are present.
+
+    Calls ``GET /api/tags`` and checks each model name against the returned list.
+    Raises ``RuntimeError`` with an actionable message on any failure so the
+    developer knows exactly what to fix before spending time loading the spec.
+    """
+    try:
+        resp = requests.get(
+            OLLAMA_URL.replace("/api/chat", "/api/tags"),
+            timeout=10,
+        )
+    except requests.RequestException as exc:
+        raise RuntimeError(
+            f"Cannot reach Ollama daemon at {OLLAMA_URL}. "
+            f"Start it with `ollama serve` and retry.\nError: {exc}"
+        ) from exc
+
+    if resp.status_code != 200:
+        raise RuntimeError(
+            f"Ollama /api/tags returned HTTP {resp.status_code}: {resp.text[:300]}"
+        )
+
+    available: set[str] = {
+        m.get("name", "") for m in resp.json().get("models", [])
+    }
+    missing = [m for m in models if m not in available]
+    if missing:
+        pull_cmds = "\n".join(f"  ollama pull {m}" for m in missing)
+        raise RuntimeError(
+            f"Required model(s) not found in Ollama:\n"
+            + "\n".join(f"  - {m}" for m in missing)
+            + f"\n\nPull them with:\n{pull_cmds}"
+        )
 
 # ── Ollama client ───────────────────────────────────────────────────────────
 
@@ -357,6 +394,9 @@ def main(argv: list[str]) -> int:
         help="Run both steps but do not write any files.",
     )
     args = parser.parse_args(argv)
+
+    print("[meta-builder] preflight: checking Ollama daemon and models")
+    assert_ollama_models_available([PROJECT_MANAGER_MODEL, CODER_MODEL])
 
     print(f"[meta-builder] loading spec from {DOCS_DIR}")
     spec = load_spec_documents(DOCS_DIR)

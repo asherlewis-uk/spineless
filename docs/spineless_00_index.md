@@ -115,7 +115,7 @@ Final hardening and precedence layer for Spineless v1 implementation. Document 1
 |----------|--------|
 | Agent model selection | Provider choice deferred; v1 contracts remain implementation-ready and provider-agnostic |
 | Spineless hosting target | Resolved by documents 08-10 for v1 implementation |
-| Spine state persistence mechanism | Resolved by documents 08-10 for v1 implementation |
+| Spine state persistence mechanism | Behavioral contract resolved by documents 08-10. Implementation substrate (database provider) is provider-agnostic and deferred — not required for Phase 1. |
 | Eval hook framework integration | Resolved by documents 08-10 for v1 implementation |
 | Python second-phase scope | Deferred to post-v1 |
 

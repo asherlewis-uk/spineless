@@ -1,5 +1,5 @@
 # Spineless — Contract Hardening
-**Version 2.0 | Source of Truth**
+**Version 1.0 | Source of Truth**
 
 ---
 
@@ -86,13 +86,111 @@ interface CardSecretReference {
   purpose: string;        // plain language: "OpenAI API key for this model"
 }
 
+// ─── Card Config Types ───────────────────────────────────────────────────────
+// CardConfig is a discriminated union on cardType.
+// Each member is derived from the per-card authoring spec in doc 08 §8.
+// Sealed-state editability per doc 08 §8 governs which fields the agent
+// may include in update_config mutations.
+
+interface InputCardFieldDef {
+  name: string;
+  type: PortType;
+  validationRules?: string[];   // e.g. ["required", "max:256"]
+}
+
+interface InputCardConfig {
+  cardType: 'input';
+  fields: InputCardFieldDef[];
+  deliveryMethod: 'api' | 'webhook' | 'form';  // default 'api'
+}
+
+interface PromptCardConfig {
+  cardType: 'prompt';
+  template: string;              // min 1 char
+  systemPrompt?: string;         // collapsed by default
+  outputSchema: Record<string, PortType>;  // min 1 field
+}
+
+interface ModelCardConfig {
+  cardType: 'model';
+  modelId: string;
+  temperature: number;           // 0–2, default 1.0
+  maxTokens?: number;
+  retryCount: number;            // default 2
+  timeoutSeconds: number;        // default 30
+  jsonMode: boolean;             // auto-enabled when Prompt Card has output schema
+}
+
+interface ToolCardConfig {
+  cardType: 'tool';
+  name: string;
+  executionTarget: string;       // API endpoint URL or built-in tool identifier
+  timeoutOverride?: number;
+}
+
+interface MemoryCardConfig {
+  cardType: 'memory';
+  retentionStrategy: string;
+  retentionWindow?: number;
+  externalStoreRef?: string;     // reference key into secrets store for external store
+}
+
+interface LogicCondition {
+  expression: string;            // evaluated against upstream output schema fields
+  branchLabel: string;
+  isDefault?: boolean;
+}
+
+interface LogicCardConfig {
+  cardType: 'logic';
+  conditions: LogicCondition[];  // min 1; min 2 output connections required at spine level
+}
+
+interface OutputCardConfig {
+  cardType: 'output';
+  destination: string;           // e.g. 'slack', 'email', 'webhook', 'api_response'
+  format: string;
+  destinationConfig?: Record<string, unknown>;  // channel, address, etc.
+  responseSchema?: Record<string, PortType>;    // for API response destinations
+}
+
+interface EvalExample {
+  input: Record<string, unknown>;
+  expectedOutput: Record<string, unknown>;
+}
+
+interface EvalCardConfig {
+  cardType: 'eval';
+  examples: EvalExample[];       // min 1
+  assertionRules?: string[];
+  passThreshold: number;         // 0–1, default 0.8
+  driftAlertThreshold?: number;
+}
+
+// Gap Cards are system-generated only — no user-configurable config fields.
+// Runtime spec is stored as GapCardSpec on the GapCard extension interface.
+interface GapCardConfig {
+  cardType: 'gap';
+}
+
+type CardConfig =
+  | InputCardConfig
+  | PromptCardConfig
+  | ModelCardConfig
+  | ToolCardConfig
+  | MemoryCardConfig
+  | LogicCardConfig
+  | OutputCardConfig
+  | EvalCardConfig
+  | GapCardConfig;
+
 // ─── Graph Types ─────────────────────────────────────────────────────────────
 
 interface Card {
   id: string;
   type: CardType;
   state: CardState;
-  config: CardConfig;     // type-specific configuration, varies by CardType
+  config: CardConfig;     // discriminated union — see CardConfig above; cardType must match Card.type
   ports: Port[];
   secretRefs?: CardSecretReference[];
   position: SpinePosition;

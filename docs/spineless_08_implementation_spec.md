@@ -336,6 +336,8 @@ Also affects:
 
 ## 10. Telemetry Redaction Rules
 
+> **Rule numbering:** Doc 10 §7 is the controlling numbering scheme and supersedes the rule order below. The semantic content is identical; the numbers differ. Implement from doc 10 §7.
+
 **Rule 1 — Secrets never stored:** Secret values do not flow through ports and cannot appear in traces. `CardSecretReference` manages secrets outside normal port flow.
 
 **Rule 2 — rawResponse redaction:** `rawResponse` is not persisted when any declared output field is marked sensitive, unless the raw response is schema-redacted before storage. `rawResponse` is never shown in the user-facing UI. If no declared output fields are sensitive, `rawResponse` may be stored for the retention window. `rawResponse` is excluded from Eval Card inputs — Eval Cards receive Model Card structured values only.

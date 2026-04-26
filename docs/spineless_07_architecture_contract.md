@@ -472,6 +472,10 @@ interface EvalResult {
   score?: number;
   failureReason?: string;
 }
+
+// MutationRequest and MutationRejection are defined in documents 09 and 10.
+// Document 09 is the consolidated type canon; document 10 supersedes where they conflict.
+// Do not implement from this document for those two interfaces.
 ```
 
 ---

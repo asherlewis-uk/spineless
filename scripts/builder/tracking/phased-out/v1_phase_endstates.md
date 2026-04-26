@@ -36,14 +36,15 @@ The storage and security layer that the rest of the system writes through. Built
 2. Execution traces and ghost trace data persist on a 30-day rolling window. Eval results and cost/latency history persist on a 90-day rolling window. Eviction is automatic and tested.
 3. `RedactedSnapshot.values` is encrypted at rest with a per-user key. Users do not manage keys directly. Key rotation is supported at the storage boundary.
 4. Secrets are stored exclusively via `CardSecretReference` in an isolated encrypted secrets store. Secret values are inaccessible to the trace store, eval engine, agent runtime, and compiler source-emit paths by construction (compile-time type separation, not runtime check alone).
-5. Telemetry redaction rules 1–7 from the canon are enforced at the write boundary:
+5. Telemetry redaction the telemetry redaction rules from doc 10 §7 (the controlling numbering) are enforced at the write boundary:
    - Secrets cannot enter port flow (type system prevents it).
    - `rawResponse` is dropped when any declared output field is `sensitive: true` and not pre-redacted.
    - `rawResponse` is excluded from Eval Card inputs.
    - Output Card delivery payloads store schema only; values never persist.
    - `sensitive: true` field values store as `[REDACTED]` with field name retained.
    - User-initiated deletion atomically removes traces, eval history, and ghost traces and clears the renderer's ghost cache.
-6. `PendingChange` rebase rules 1–5 are implemented as pure functions over `(SealedSnapshot, PendingChange[])` and unit-tested for every status outcome (`queued`, `rebased`, `conflicted`, `included_in_release`).
+   - All stored values in RedactedSnapshot are encrypted at rest with a per-user key.
+6. `PendingChange` rebase rules 1–5 are implemented as pure functions over `(SealedSnapshot, PendingChange[])` and unit-tested for every status outcome (`queued`, `rebased`, `conflicted`, `included_in_release`, `rejected`). The `rejected` outcome is tested via the user-rejection path (Output Card face dismissal), not via the rebase path.
 7. Integration tests confirm no code path writes a secret value, a sensitive field's raw value, or a delivery payload value to any persistent store.
 
 **Gate to Phase 3:** All seven criteria pass in CI. A red-team test that asserts no secret string and no sensitive field value reaches the trace store under any input passes.

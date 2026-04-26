@@ -1,5 +1,5 @@
 # Spineless — Contract Hardening
-**Version 1.0 | Source of Truth**
+**Version 2.0 | Source of Truth**
 
 ---
 
