@@ -3,6 +3,10 @@
 
 ---
 
+> **Scope note:** Document 11 supersedes this document wherever card-authored generation conflicts with the application-flow spine reframe. This document remains historical interaction and component context only where non-conflicting.
+
+---
+
 ## Overview
 
 Cards are the atomic unit of Spineless. Every card is a live window into a real piece of the system — not a representation of something that exists elsewhere, but the thing itself, expressed visually.

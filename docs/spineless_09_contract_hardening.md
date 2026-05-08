@@ -4,6 +4,10 @@
 
 ---
 
+> **Scope note:** Document 11 supersedes this document wherever final v1 implementation contracts conflict with the application-flow spine reframe.
+
+---
+
 ## Purpose
 
 This document confirms the resolved state of contract decisions across the Spineless v1 documentation set. It serves as a precision layer and implementation freeze declaration for documents 01-08. Document 10 is the final hardening and precedence layer and controls wherever it conflicts with this document.
@@ -473,9 +477,9 @@ Second tab is read-only in v1. No CRDT. No OT. Banner indicates primary session.
 - [x] Interaction behaviors — mouse, keyboard, undo/redo
 - [x] Engineering acceptance criteria — measurable and testable
 
-**The Spineless v1 documentation set is complete and frozen.**
+**The earlier Spineless v1 implementation contract was complete and frozen before the document 11 scope reframe.**
 
 ---
 
-_Spineless Contract Hardening. Version 2.0. April 2026._
-_Document 10 supersedes this document wherever their implementation details conflict._
+_Spineless Contract Hardening. Version 2.1. May 2026._
+_Document 11 supersedes this document wherever the application-flow reframe conflicts with earlier implementation details._

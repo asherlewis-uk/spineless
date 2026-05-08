@@ -3,6 +3,10 @@
 
 ---
 
+> **Scope note:** Document 11 supersedes this document wherever generated-code compilation conflicts with the application-flow spine reframe. This document remains historical implementation context only where non-conflicting.
+
+---
+
 ## The Agent Model
 
 ### Principle

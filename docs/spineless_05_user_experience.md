@@ -3,6 +3,10 @@
 
 ---
 
+> **Scope note:** Document 11 supersedes this document wherever first-run card authoring, generated output, or deployment flows conflict with the application-flow spine reframe.
+
+---
+
 ## First Open
 
 The user opens Spineless. No project setup, no configuration wizard, no template selection, no onboarding flow.
