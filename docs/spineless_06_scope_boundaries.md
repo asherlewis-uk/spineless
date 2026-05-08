@@ -1,5 +1,5 @@
 # Spineless — Scope Boundaries
-**Version 2.1 | Source of Truth**
+**Version 3.0 | Source of Truth**
 
 ---
 
@@ -23,7 +23,7 @@ Supporting systems around the spine: events and signals, data flow, project stru
 Identifying the structural spine of an existing codebase. The goal is not to linearize the whole repository; it is to identify the main application flow and show how surrounding systems interact with it.
 
 ### Map Elements
-Spine nodes, biological-system overlays, attachment points, feature organs, and source references. Earlier card-system details are retained only as historical interaction context where they do not conflict with document 11.
+The map uses the document 11 concepts of spine nodes, system overlays, attachment points, and feature organs. Spine nodes are the main flow stages. System overlays are biological systems around the spine. Attachment points are where overlays affect, protect, feed, or observe the spine. Feature organs are major modules or domains connected to one or more flow stages. Earlier card-system details are retained only as historical interaction context where they do not conflict with document 11.
 
 ### The Agent
 Full codebase and map context on every invocation. Map update proposals only — never direct file mutations. Confirmed updates only. Unresolvable structural questions surface as explicit gaps in the map.

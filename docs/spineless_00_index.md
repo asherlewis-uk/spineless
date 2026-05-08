@@ -1,6 +1,6 @@
 # Spineless — Document Index
 
-**Version 2.1 | Source of Truth**
+**Version 3.0 | Source of Truth**
 
 ---
 
@@ -105,7 +105,7 @@ Highest-precedence scope update. Reframes the spine as the main frontend → mid
 | Agent mutates              | Spine map and annotations only — never source files directly |
 | Agent write model          | Analysis and confirmed map updates only                |
 | Output target              | Application-flow understanding, not generated source   |
-| State names                | To be redefined around analysis and map refinement     |
+| State names                | Analysis and Refinement                                |
 | Deployment                 | Not part of current scope                              |
 | Rendering                  | Custom WebGL with GLSL shaders                         |
 | Spatial grammar            | Scroll-driven vertical depth                           |

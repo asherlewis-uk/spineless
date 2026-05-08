@@ -1,6 +1,6 @@
 # Spineless — Application Flow Reframe
 
-**Version 2.1 | Highest Precedence Scope Update**
+**Version 3.0 | Highest Precedence Scope Update**
 
 ---
 

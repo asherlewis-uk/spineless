@@ -1,5 +1,5 @@
 # Spineless — Product Definition
-**Version 2.1 | Source of Truth**
+**Version 3.0 | Source of Truth**
 
 ---
 
@@ -88,7 +88,7 @@ Earlier generated-code and Next.js-only compilation assumptions are superseded w
 
 ## The State Model
 
-The previous Spineless Live / Sealed production state model is superseded where it assumes card-authored compilation and deployment. The current scope needs states around analysis and confirmed map refinement.
+The previous Spineless Live / Sealed production state model is superseded where it assumes card-authored compilation and deployment. The current state names are **Analysis** and **Refinement**.
 
 ### Analysis
 The codebase is inspected, entry points are identified, and the main application-flow spine is proposed. Supporting systems are discovered and attached to relevant spine sections.
