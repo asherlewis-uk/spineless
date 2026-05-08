@@ -481,5 +481,5 @@ Second tab is read-only in v1. No CRDT. No OT. Banner indicates primary session.
 
 ---
 
-_Spineless Contract Hardening. Version 2.1. May 2026._
+_Spineless Contract Hardening. Version 3.0. May 2026._
 _Document 11 supersedes this document wherever the application-flow reframe conflicts with earlier implementation details._
