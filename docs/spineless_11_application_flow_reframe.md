@@ -1,6 +1,6 @@
 # Spineless — Application Flow Reframe
 
-**Version 3.0 | Highest Precedence Scope Update**
+**Version 2.1 | Highest Precedence Scope Update**
 
 ---
 
@@ -32,6 +32,7 @@ This document is the highest-precedence document in the Spineless pre-implementa
 
 - Document 11 supersedes documents 00-10 wherever they conflict.
 - Documents 08-10 remain useful implementation context only where they do not conflict with this reframe.
+- Precedence is determined by document number, not by this document's version number.
 - Any statement that treats the entire codebase as a single linear spine is superseded.
 - Any statement that places existing codebase analysis out of scope is superseded.
 

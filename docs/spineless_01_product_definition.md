@@ -1,5 +1,5 @@
 # Spineless — Product Definition
-**Version 3.0 | Source of Truth**
+**Version 2.1 | Source of Truth**
 
 ---
 

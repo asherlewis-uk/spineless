@@ -1,6 +1,6 @@
 # Spineless — Document Index
 
-**Version 3.0 | Source of Truth**
+**Version 2.1 | Source of Truth**
 
 ---
 
@@ -17,6 +17,8 @@ When there is a conflict between something said in conversation and something wr
 Document 11 defines the current highest-precedence product scope.
 
 If document 11 conflicts with documents 00-10, document 11 controls.
+
+Precedence is determined by document number, not by per-document version number.
 
 Documents 08, 09, and 10 remain implementation context only where they do not conflict with document 11.
 
