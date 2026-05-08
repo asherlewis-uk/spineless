@@ -1,28 +1,26 @@
 # Spineless — Contract Hardening
 
-**Version 2.0 | Source of Truth**
+**Version 2.1 | Source of Truth**
 
 ---
 
 ## Purpose
 
-This document completes the implementation spec by resolving the eight contract hardening items identified in the final audit. Every resolution derives from locked context. This document is additive where it does not conflict with documents 08 and 09, and controlling where it does conflict with documents 08 or 09.
+This document completed the earlier implementation spec by resolving the eight contract hardening items identified in the final audit. It now remains implementation context where it does not conflict with document 11.
 
-After this document, the doc set is implementation-freeze ready.
+Document 11 is the highest-precedence scope update and supersedes this document wherever the application-flow reframe conflicts with earlier implementation assumptions.
 
 ---
 
 ## Canonical Precedence
 
-Documents 08, 09, and 10 define the Spineless v1 implementation canon.
+Document 11 defines the current highest-precedence product scope.
 
-If documents 00-07 conflict with documents 08-10, documents 08-10 control.
+If document 11 conflicts with documents 00-10, document 11 controls.
 
-If document 10 conflicts with documents 08 or 09, document 10 controls.
+Documents 08, 09, and 10 remain implementation context only where they do not conflict with document 11.
 
-Documents 00-07 remain product, visual, and scope context. They are not implementation-authoritative where superseded by documents 08-10.
-
-Document 10 is a hardening and precedence layer. It supersedes conflicting implementation details in documents 08 and 09.
+Documents 00-07 remain product, visual, and scope context where not superseded.
 
 ---
 

@@ -1,40 +1,49 @@
 # Spineless — Product Definition
-**Version 2.0 | Source of Truth**
+**Version 2.1 | Source of Truth**
 
 ---
 
 ## What Spineless Is
 
-Spineless is a visual, scroll-based environment where prompt engineers build full-stack AI systems. It analyzes nothing and starts from nothing — the user authors their system through cards, the spine grows as they build, and the source code is the compiled output of that spine.
+Spineless is a visual, scroll-based environment for understanding the main application flow of a codebase.
 
-The spine is not a diagram of the system. The spine is the system.
+The spine is no longer the whole codebase forced into a single linear chain. The spine is the central route an interaction, request, or feature execution travels through the application stack:
 
-The spine graph is the single source of truth. Cards and connections live in that graph. Files are derived artifacts. The user never touches source directly, never manages a codebase, and never accumulates complexity they cannot see. The spine holds all complexity visibly, spatially, and manageably — from the first card to the last.
+```text
+User interaction
+  ↓
+Frontend UI
+  ↓
+Middleware / API layer
+  ↓
+Backend services
+  ↓
+Database / external systems
+```
+
+The codebase remains the implementation source of truth. Spineless provides an interpretive spine map of the core flow and the supporting systems that attach to it.
 
 ---
 
 ## The Problem It Solves
 
-Prompt engineers can design full-stack AI systems in their heads, in conversation, in documents. They understand how prompts chain, how models should be configured, how tools connect, how memory should behave, how outputs should be validated.
+Real codebases are rarely perfectly linear. They are layered, connected, and interdependent.
 
-They cannot make those systems real without writing code. And when they hand off to engineers, something is always lost in translation.
+Existing code views expose files, directories, imports, and dependency graphs, but they rarely answer the core structural question directly: what is the main path through the application, and which systems support it?
 
-Existing options force a choice between two failures:
+Spineless solves this by separating the central application-flow spine from the surrounding biological systems that keep it functioning.
 
-- **Learn to code** — high friction, high error rate, abandonment
-- **Use no-code tools** — black boxes, no debuggability, no real control
-
-Spineless sits between these. The logic is fully visible and manipulable. The code is never written by the user. The system is real, deployed, and running — authored entirely through the spine.
+The user should not have to pretend every file belongs on one vertical execution path. The product identifies the spine, then maps auth, logging, validation, caching, state, persistence, UI, services, domains, and events around it.
 
 ---
 
 ## The User
 
-**Solo prompt engineers** who can architect full-stack AI systems but do not write code fluently.
+**Solo builders and engineers** who need to understand an application codebase structurally.
 
-They understand: prompt structure and chaining, LLM behavior and parameters, tool use and function calling, RAG, memory, and retrieval, system inputs, outputs, and validation, how AI systems should behave end to end.
+They understand that applications have a main path and supporting systems, but need a visual model that makes those relationships legible.
 
-They do not manage: TypeScript, imports, or package dependencies, API routes, middleware, or auth, deployment configuration or infrastructure, Git, CI/CD, or environment management.
+They do not want a flat file tree, a generic graph, or a misleading single-line representation of the whole repository.
 
 Collaboration is out of scope for v1. Spineless is built for a single user operating their own system.
 
@@ -42,49 +51,64 @@ Collaboration is out of scope for v1. Spineless is built for a single user opera
 
 ## The Core Mechanic
 
-The user authors cards. Cards compose into a spine. The spine compiles to a running Next.js / TypeScript system.
+Spineless identifies the core application-flow spine, then maps supporting biological systems around it.
 
-Every card represents a real, functional system component. Every connection between cards is a typed, validated relationship. Every edit to a card triggers system-wide impact analysis. Every proposed change is confirmed before it affects the system: in Live state, confirmation mutates the active spine graph; in Sealed state, confirmation appends a PendingChange to the queue without mutating the current SealedSnapshot.
+The spine is the vertical flow:
 
-The spine grows with the system. Complexity never outpaces visibility because visibility is where the work happens.
+```text
+Frontend
+  ↓
+Middleware
+  ↓
+Backend
+```
+
+Supporting systems are represented as surrounding layers:
+
+- nervous system — events, signals, state changes, user interactions
+- circulatory system — data flow, API calls, database reads/writes, caching
+- skeleton — project structure, routing, schemas, architecture
+- muscles — business logic, services, functions
+- organs — major features, modules, domains
+- skin — UI, styling, presentation
+- immune system — authentication, validation, permissions, error handling, security
+- brain / memory — state management, database, configuration, decision-making logic
+
+Complexity stays visible because the product distinguishes central flow from supporting structure.
 
 ---
 
 ## The Output Target
 
-Spineless generates **Next.js / TypeScript** as its output surface. This is the initial and primary compilation target. Python is a natural second-phase target for AI tooling code specifically — deferred to post-v1.
+Spineless' pre-build output is an application-flow understanding layer: a spine map plus biological-system overlays.
 
-The generated code is not for the user to read or edit. It is a byproduct of decisions made in the spine. The user operates the spine. The spine produces the system.
+Earlier generated-code and Next.js-only compilation assumptions are superseded where they conflict with this scope. Future implementation work should begin from codebase analysis and flow discovery.
 
 ---
 
 ## The State Model
 
-Spineless has two explicit states with a hard boundary between them.
+Spineless' previous Live / Sealed production state model is superseded where it assumes card-authored compilation and deployment. The current pre-build scope needs states around analysis and confirmed map refinement.
 
-### Live
-The working state. The spine is active, editable, and responsive. Cards can be authored, connected, and reconfigured. Confirmed Live mutations update the spine graph, the compiler runs deterministically, and the Live Runtime Sandbox updates. Particle streams flow. Cards glow with activity.
+### Analysis
+The codebase is inspected, entry points are identified, and the main application-flow spine is proposed. Supporting systems are discovered and attached to relevant spine sections.
 
-### Sealed
-The production state. The spine is crystallized. The system runs against a locked snapshot on Vercel. The spine remains visible and interactable — confirmational changes are allowed and queue for the next release cycle. No free structural editing. No immediate writes to production. The visual language shifts: cold blue-white, crystalline surfaces, slowed particle streams.
+### Refinement
+The user reviews the proposed spine and supporting-system map. Confirmed changes update the map and annotations, not source files.
 
-The user always knows which state they are in. The boundary is explicit, visible, and deliberate.
+The user always knows whether Spineless is discovering structure, presenting a proposed map, or applying confirmed map refinements.
 
 ---
 
 ## The Agent Model
 
-When a user reconfigures or edits a card, a local AI agent receives full system context — the entire spine graph, the complete dependency graph, the full generated codebase state — and reasons about what needs to change in the spine to reflect that intent.
+When a user asks Spineless to analyze or refine a view, an agent receives codebase context, discovered flow information, and the current spine map. It reasons about how the map should change.
 
 **Autonomous reasoning. Confirmed writing.**
 
-The agent proposes a semantic spine mutation — not a file mutation. Spineless surfaces the proposal as a confirmation state directly on the card that triggered it. The user confirms.
+The agent proposes semantic updates to the spine map and supporting-system annotations — not direct source-file mutations. The user confirms any map-changing operation.
 
-In Live state, the spine graph mutates, the compiler runs deterministically from the updated spine state, and the Live Runtime Sandbox updates.
-
-In Sealed state, a PendingChange is appended to the queue. The current SealedSnapshot is not mutated, compilation does not run, and deployment does not occur until Release.
-
-The agent understands the whole system before proposing anything. No narrow, card-scoped edits. No local guesses. Every proposal is the result of system-wide reasoning.
+The agent understands the whole application before proposing anything. No narrow, file-scoped guesses. Every proposal is the result of system-wide reasoning about the core flow and its supporting systems.
 
 ---
 
@@ -92,17 +116,16 @@ The agent understands the whole system before proposing anything. No narrow, car
 
 | Not This | Why |
 |----------|-----|
-| A diagram tool | The spine executes. It does not represent. |
-| A code editor | The user never sees or touches source directly. |
-| A no-code template generator | Cards are authored, not selected from a library. |
-| A prompt playground | Spineless builds systems, not single-shot completions. |
-| A rescue tool for existing codebases | Spineless prevents complexity from accumulating, not recovers from it. |
-| A collaborative tool | v1 is single user. Collaboration is not in scope. |
-| Language agnostic | Next.js / TypeScript is the initial and primary target. |
-| An autonomous agent | The agent reasons autonomously. It writes only on confirmation. |
+| A generic dependency graph | Spineless centers the main application flow, not every relationship equally. |
+| A whole-repo linearization tool | The entire codebase is not the spine. |
+| A code editor | Source may be referenced, but Spineless does not make direct source edits. |
+| A no-code template generator | The current scope is understanding existing application structure. |
+| A prompt playground | Spineless models application flow, not single-shot completions. |
+| A collaborative tool | v1 remains single user. Collaboration is not in scope. |
+| An autonomous coding agent | The agent reasons autonomously, but confirmed changes affect the map, not source files. |
 
 ---
 
 ## The Name
 
-Spineless subverts the expectation. Active Theory's Spine implies rigid structure. Spineless implies fluid, adaptive, organic growth. The tool bends to how the user thinks — not to how code is structured. The system has no rigid backbone. It grows as the user grows it.
+Spineless subverts the expectation. The product identifies a structural spine without pretending the whole body is a spine. It makes the application feel biological: central flow, supporting systems, organs, skin, memory, immunity, and circulation working together.
