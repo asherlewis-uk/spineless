@@ -6,7 +6,7 @@
 
 ## Purpose
 
-This document updates the pre-build product scope for Spineless. It supersedes earlier assumptions that a whole codebase should be represented as one long, linear spine.
+This document updates the pre-implementation product scope for Spineless. It supersedes earlier assumptions that a whole codebase should be represented as one long, linear spine.
 
 Spineless now treats the **main application flow** as the spine: the central route a request, user interaction, or feature execution travels through the application stack.
 
@@ -28,7 +28,7 @@ The rest of the codebase is not forced into that vertical path. Supporting syste
 
 ## Precedence
 
-This document is the highest-precedence document in the Spineless pre-build documentation set.
+This document is the highest-precedence document in the Spineless pre-implementation documentation set.
 
 - Document 11 supersedes documents 00-10 wherever they conflict.
 - Documents 08-10 remain useful implementation context only where they do not conflict with this reframe.

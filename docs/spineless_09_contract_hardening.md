@@ -477,7 +477,7 @@ Second tab is read-only in v1. No CRDT. No OT. Banner indicates primary session.
 - [x] Interaction behaviors — mouse, keyboard, undo/redo
 - [x] Engineering acceptance criteria — measurable and testable
 
-**The earlier Spineless v1 implementation contract was complete and frozen before the document 11 scope reframe.**
+**The earlier Spineless v1 implementation contract was finalized before the document 11 scope reframe and now serves as historical context wherever it conflicts with document 11.**
 
 ---
 

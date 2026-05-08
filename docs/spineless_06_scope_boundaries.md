@@ -29,13 +29,13 @@ Spine nodes, biological-system overlays, attachment points, feature organs, and 
 Full codebase and map context on every invocation. Map update proposals only — never direct file mutations. Confirmed updates only. Unresolvable structural questions surface as explicit gaps in the map.
 
 ### Source Context
-Source files may be referenced as evidence for the spine and biological-system map. The current pre-build scope is understanding and mapping, not direct source mutation.
+Source files may be referenced as evidence for the spine and biological-system map. The current scope is understanding and mapping, not direct source mutation.
 
 ### State Model
 Analysis and refinement states for discovering, reviewing, and confirming the application-flow map. Earlier Live / Sealed production states are superseded where they assume compilation or deployment.
 
 ### Deployment
-Deployment is not part of the current pre-build scope. The product maps existing application structure; it does not deploy generated output.
+Deployment is not part of the current scope. The product maps existing application structure; it does not deploy generated output.
 
 ### User
 Solo builder or engineer. Single user per system in v1.
@@ -60,7 +60,7 @@ A dedicated card type for complex output parsing — regex extraction, multi-ste
 Python as a generated output target. **Not in v1.** The current scope is source analysis and application-flow mapping, not code generation.
 
 ### Direct Source Editing
-Editing application source files from Spineless. **Not in scope for the pre-build documentation state.** Spineless maps and explains source structure; it does not mutate source.
+Editing application source files from Spineless. **Not in current scope.** Spineless maps and explains source structure; it does not mutate source.
 
 ### Generated Application Output
 Generating a new application codebase from the spine. **Superseded by document 11.** The current scope starts from an existing codebase and identifies its structural flow.

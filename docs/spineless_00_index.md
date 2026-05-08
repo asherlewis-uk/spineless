@@ -6,7 +6,7 @@
 
 ## What This Set Is
 
-This is the complete source of truth for the Spineless pre-build documentation set. Every product decision, scope boundary, user experience detail, visual language specification, architectural constraint, and implementation spec is recorded here.
+This is the complete source of truth for the Spineless pre-implementation documentation set. Every product decision, scope boundary, user experience detail, visual language specification, architectural constraint, and implementation spec is recorded here.
 
 When there is a conflict between something said in conversation and something written here, this document set wins. When a new decision is made, it is recorded here before it is acted on anywhere else.
 
@@ -106,7 +106,7 @@ Highest-precedence scope update. Reframes the spine as the main frontend → mid
 | Agent write model          | Analysis and confirmed map updates only                |
 | Output target              | Application-flow understanding, not generated source   |
 | State names                | To be redefined around analysis and map refinement     |
-| Deployment                 | Not part of current pre-build scope                    |
+| Deployment                 | Not part of current scope                              |
 | Rendering                  | Custom WebGL with GLSL shaders                         |
 | Spatial grammar            | Scroll-driven vertical depth                           |
 | Visual reference           | Active Theory spine component aesthetic                |

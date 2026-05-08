@@ -80,7 +80,7 @@ Complexity stays visible because the product distinguishes central flow from sup
 
 ## The Output Target
 
-Spineless' pre-build output is an application-flow understanding layer: a spine map plus biological-system overlays.
+Spineless's current output is an application-flow understanding layer: a spine map plus biological-system overlays.
 
 Earlier generated-code and Next.js-only compilation assumptions are superseded where they conflict with this scope. Future implementation work should begin from codebase analysis and flow discovery.
 
@@ -88,7 +88,7 @@ Earlier generated-code and Next.js-only compilation assumptions are superseded w
 
 ## The State Model
 
-Spineless' previous Live / Sealed production state model is superseded where it assumes card-authored compilation and deployment. The current pre-build scope needs states around analysis and confirmed map refinement.
+The previous Spineless Live / Sealed production state model is superseded where it assumes card-authored compilation and deployment. The current scope needs states around analysis and confirmed map refinement.
 
 ### Analysis
 The codebase is inspected, entry points are identified, and the main application-flow spine is proposed. Supporting systems are discovered and attached to relevant spine sections.
