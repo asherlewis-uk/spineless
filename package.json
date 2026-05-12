@@ -1,0 +1,27 @@
+{
+  "name": "spineless",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Spineless v1 deterministic spine graph and state machine core.",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "verify": "npm run typecheck && npm run test && npm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.19.25",
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.1"
+  }
+}
