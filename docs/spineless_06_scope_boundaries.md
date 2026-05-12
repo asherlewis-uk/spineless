@@ -1,5 +1,5 @@
 # Spineless — Scope Boundaries
-**Version 2.0 | Source of Truth**
+**Version 2.1 | Source of Truth**
 
 ---
 
@@ -13,26 +13,32 @@ When a new idea surfaces — from any source — evaluate it against this docume
 
 ## In Scope — v1
 
-### The Spine
-Scroll-driven, vertically arranged, depth-aware card spine. Custom WebGL rendering with GLSL shaders. Glassmorphic card surfaces with state-driven lighting. Bézier ribbon connections with particle streams. Ghost trace system for execution history. Impact analysis on every card edit. Gap Card system for unresolved decisions. Minimap navigation. Pinch overview.
+### The Application-Flow Spine
+Scroll-driven, vertically arranged, depth-aware representation of the main frontend → middleware/API → backend flow. The spine identifies the central path a request, interaction, or feature execution travels through.
 
-### The Card System
-Input Card, Prompt Card, Model Card, Tool Card, Memory Card, Logic Card, Output Card, Eval Card, Gap Card (system-generated).
+### Biological System Mapping
+Supporting systems around the spine: events and signals, data flow, project structure, business logic, feature domains, UI/styling, authentication, validation, permissions, error handling, security, state, persistence, configuration, and decision-making logic.
+
+### Existing Codebase Analysis
+Identifying the structural spine of an existing codebase. The goal is not to linearize the whole repository; it is to identify the main application flow and show how surrounding systems interact with it.
+
+### Map Elements
+The map uses the document 11 concepts of spine nodes, system overlays, attachment points, and feature organs. Spine nodes are the main flow stages. System overlays are biological systems around the spine. Attachment points are where overlays affect, protect, feed, or observe the spine. Feature organs are major modules or domains connected to one or more flow stages. Earlier card-system details are retained only as historical interaction context where they do not conflict with document 11.
 
 ### The Agent
-Full system context on every invocation. Spine mutation proposals only — never direct file mutations. Proposal surfaced as confirmation state on the triggering card. Confirmed writing only. Gap Card generation on unresolvable proposals. MutationScope enforcement — structural proposals in Sealed state become Gap Cards.
+Full codebase and map context on every invocation. Map update proposals only — never direct file mutations. Confirmed updates only. Unresolvable structural questions surface as explicit gaps in the map.
 
-### Compilation
-Next.js / TypeScript output target. Continuous compilation on every confirmed change in Live state. Queued compilation on Release in Sealed state. Deterministic — same spine state always produces same files.
+### Source Context
+Source files may be referenced as evidence for the spine and biological-system map. The current scope is understanding and mapping, not direct source mutation.
 
 ### State Model
-Live state — fully editable, continuous compilation, Live runtime sandbox. Sealed state — locked to release cycle, confirmational changes queue. Seal action — promotes Live to production Vercel deployment. Release action — validates/rebases queued changes, applies included entries to the current Sealed snapshot graph to produce the next snapshot, pushes new Vercel deployment, and remains Sealed. Return to Live — pending queue preserved.
+Analysis and refinement states for discovering, reviewing, and confirming the application-flow map. Earlier Live / Sealed production states are superseded where they assume compilation or deployment.
 
 ### Deployment
-Vercel via Spineless-managed API. One-time OAuth connection. Automatic on every Seal and Release. Production URL surfaces on Output Card. User never touches Vercel directly.
+Deployment is not part of the current scope. The product maps existing application structure; it does not deploy generated output.
 
 ### User
-Solo prompt engineer. Single user per system in v1.
+Solo builder or engineer. Single user per system in v1.
 
 ---
 
@@ -41,29 +47,29 @@ Solo prompt engineer. Single user per system in v1.
 ### Collaboration
 Real-time multiplayer editing, shared cursors, concurrent card editing. **Not in v1.** The intended audience is a solo developer.
 
-### Existing Codebase Analysis
-Pointing Spineless at an existing repo and generating a spine from it. **Not in v1.** Spineless prevents complexity from accumulating. Rescuing existing complexity is a different product.
+### Whole-Codebase Linearization
+Treating every file, module, helper, schema, utility, and dependency as part of one long vertical spine. **Not in scope.** The spine is the main application flow; surrounding code belongs to supporting biological systems.
 
 ### Template Library
-A gallery of pre-built system templates. **Not in v1.** Every system begins with an Input Card. The user authors from intent.
+A gallery of pre-built system templates. **Not in v1.** Spineless starts from an existing application codebase and identifies its structure.
 
 ### Parser Card
-A dedicated card type for complex output parsing — regex extraction, multi-step transformation, format conversion. **Not in v1.** Any earlier Parser Card reference is superseded. Structured output in v1 is handled by Prompt Card declared output schema plus Model Card structured-output enforcement. Parser Card may be considered only as a future, post-v1 possibility.
+A dedicated card type for complex output parsing — regex extraction, multi-step transformation, format conversion. **Not in v1.** Earlier card-type assumptions are superseded by document 11 where they conflict with codebase mapping.
 
 ### Python Compilation Target
-Python as a second output target for AI tooling code. **Not in v1.** Acknowledged as a natural second phase.
+Python as a generated output target. **Not in v1.** The current scope is source analysis and application-flow mapping, not code generation.
 
-### Code Visibility
-Any surface that shows the user their generated source code. **Not in v1.** The spine is the interface. The code is infrastructure.
+### Direct Source Editing
+Editing application source files from Spineless. **Not in current scope.** Spineless maps and explains source structure; it does not mutate source.
 
-### Export to Code
-A feature that exports the generated codebase as an editable project. **Not in v1.** The generated code is not for the user.
+### Generated Application Output
+Generating a new application codebase from the spine. **Superseded by document 11.** The current scope starts from an existing codebase and identifies its structural flow.
 
 ### Version History UI
 A visual interface for browsing and restoring previous spine states. Ghost traces provide spatial execution memory. Sealed releases provide production checkpoints. A full version history browser is **not in v1.**
 
 ### Natural Language System Generation
-Describing a system in natural language and having Spineless generate the initial spine. **Not in v1.** The user authors cards directly.
+Describing a system in natural language and having Spineless generate a new application or initial authored spine. **Not in v1.** Spineless identifies the spine from existing application structure.
 
 ### Mobile
 Spineless is a desktop product. **Not in scope.**
@@ -77,12 +83,12 @@ An agent that writes to source without user confirmation. **Permanently out of s
 
 The following are signals that a proposal or conversation has drifted from Spineless's defined scope:
 
-- "What if the user could import an existing project?"
+- "What if every file were a node on the spine?"
 - "What if we added a template gallery?"
 - "What if we made it collaborative?"
 - "What if the agent just handled it automatically?"
-- "What if we showed the user the generated code?"
-- "What if we supported Python too?"
+- "What if auth, logging, validation, and caching were just downstream spine nodes?"
+- "What if Spineless generated a new app from the map?"
 - "What if we added a mobile view?"
 - "What if we added a Parser Card?"
 

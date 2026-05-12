@@ -1,12 +1,12 @@
 # Spineless — Document Index
 
-**Version 2.0 | Source of Truth**
+**Version 2.1 | Source of Truth**
 
 ---
 
 ## What This Set Is
 
-This is the complete, frozen source of truth for Spineless v1. Every product decision, scope boundary, user experience detail, visual language specification, architectural constraint, and implementation spec is recorded here. Nothing in these documents is aspirational or approximate. Every statement is a deliberate, locked decision.
+This is the complete source of truth for the Spineless pre-implementation documentation set. Every product decision, scope boundary, user experience detail, visual language specification, architectural constraint, and implementation spec is recorded here.
 
 When there is a conflict between something said in conversation and something written here, this document set wins. When a new decision is made, it is recorded here before it is acted on anywhere else.
 
@@ -14,15 +14,15 @@ When there is a conflict between something said in conversation and something wr
 
 ## Canonical Precedence
 
-Documents 08, 09, and 10 define the Spineless v1 implementation canon.
+Document 11 defines the current highest-precedence product scope.
 
-If documents 00-07 conflict with documents 08-10, documents 08-10 control.
+If document 11 conflicts with documents 00-10, document 11 controls.
 
-If document 10 conflicts with documents 08 or 09, document 10 controls.
+Precedence is determined by document number, not by per-document version number.
 
-Documents 00-07 remain product, visual, and scope context. They are not implementation-authoritative where superseded by documents 08-10.
+Documents 08, 09, and 10 remain implementation context only where they do not conflict with document 11.
 
-Document 10 is a hardening and precedence layer. It supersedes conflicting implementation details in documents 08 and 09.
+Documents 00-07 remain product, visual, and scope context where not superseded.
 
 ---
 
@@ -38,7 +38,7 @@ What Spineless is. The problem it solves. The user it serves. The core mechanic.
 
 `spineless_02_card_system.md`
 
-Every card type defined in full. Card anatomy. Typed connections. Card states. The ghost trace system. How cards are authored, what they compile to, and how they behave under impact.
+Earlier card-system implementation context. Superseded by document 11 where it assumes card-authored generation.
 
 ### 03 — The Spine & Visual Language
 
@@ -50,7 +50,7 @@ The spine's spatial logic. The scroll interaction model. Ribbon connections. The
 
 `spineless_04_agent_compilation.md`
 
-The agent's trigger, context, proposal, and write cycle. Impact analysis. The compilation model. The Live / Sealed compilation boundary. The Gap Card as a system mechanism.
+Earlier agent and compilation context. Superseded by document 11 where it assumes generated application output.
 
 ### 05 — User Experience
 
@@ -74,7 +74,7 @@ Source of truth resolution. Canonical edit lifecycle state machines — Live and
 
 `spineless_08_implementation_spec.md`
 
-Complete state machine with Live and Sealed paths. CardState enum. MutationScope enforcement. Impact analysis budget. Eval middleware — fully async. Per-card authoring spec for all nine card types. Confirmation state specification. Minimap specification. Engineering acceptance criteria. Interaction behaviors.
+Earlier implementation state and interaction context. Superseded by document 11 where it conflicts with the application-flow reframe.
 
 ### 09 — Contract Hardening
 
@@ -88,32 +88,38 @@ LifecycleStage separated from CardState. PendingChange rebase rules. Prompt/Mode
 
 Final hardening and precedence layer for Spineless v1 implementation. Document 10 is additive where non-conflicting and controlling where it conflicts with documents 08 or 09.
 
+### 11 — Application Flow Reframe
+
+`spineless_11_application_flow_reframe.md`
+
+Highest-precedence scope update. Reframes the spine as the main frontend → middleware/API → backend application flow and maps supporting code as biological systems around it.
+
 ---
 
 ## Locked Decisions Summary
 
 | Decision                   | Locked Value                                           |
 | -------------------------- | ------------------------------------------------------ |
-| User                       | Solo prompt engineer, not a coder                      |
+| User                       | Builder or engineer understanding an application codebase |
 | Collaboration              | Out of scope, v1                                       |
-| Entry point                | Empty spine, Input Card, user authors from scratch     |
-| Source of truth            | Spine graph canonical. Files are compiled output.      |
-| Agent mutates              | Spine state only — never source files directly         |
-| Agent write model          | Autonomous reasoning, confirmed writing only           |
-| Output target              | Next.js / TypeScript                                   |
-| State names                | Live and Sealed                                        |
-| Deployment                 | Vercel via Spineless-managed API                       |
+| Entry point                | Existing application flow, identified from codebase structure |
+| Source of truth            | The codebase is canonical; the Spineless spine is an interpretive flow map |
+| Agent mutates              | Spine map and annotations only — never source files directly |
+| Agent write model          | Analysis and confirmed map updates only                |
+| Output target              | Application-flow understanding, not generated source   |
+| State names                | Analysis and Refinement                                |
+| Deployment                 | Not part of current scope                              |
 | Rendering                  | Custom WebGL with GLSL shaders                         |
 | Spatial grammar            | Scroll-driven vertical depth                           |
 | Visual reference           | Active Theory spine component aesthetic                |
-| Language scope             | JavaScript / TypeScript primary. Python deferred.      |
-| Existing codebase analysis | Out of scope, v1                                       |
+| Language scope             | Existing application codebases; language target not locked |
+| Existing codebase analysis | In scope — focused on the main application flow        |
 | Autonomous agent writes    | Permanently out of scope                               |
 | Mobile                     | Out of scope                                           |
 | Template library           | Out of scope, v1                                       |
-| Code visibility for user   | Out of scope                                           |
-| Eval execution             | Fully async, zero execution chain latency              |
-| Card creation              | Port label affordance and drag-to-void, both canonical |
+| Code visibility for user   | In scope as referenced source context, not as an editing surface |
+| Eval execution             | Superseded unless reintroduced for codebase analysis   |
+| Card creation              | Superseded unless reintroduced for map authoring       |
 | Multi-tab                  | Second tab read-only, v1                               |
 | Secret model               | Secrets never enter port flow — CardSecretReference    |
 | Sensitive data             | port.sensitive: boolean governs user data redaction    |
@@ -132,4 +138,4 @@ Final hardening and precedence layer for Spineless v1 implementation. Document 1
 
 ---
 
-_Spineless v2.0. April 2026._
+_Spineless v2.1. May 2026._

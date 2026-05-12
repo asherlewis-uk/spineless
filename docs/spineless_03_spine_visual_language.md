@@ -1,13 +1,13 @@
 # Spineless — The Spine & Visual Language
-**Version 2.0 | Source of Truth**
+**Version 2.1 | Source of Truth**
 
 ---
 
 ## The Spine
 
-The spine is the central structure of Spineless. It is a vertically scrolling, depth-aware arrangement of cards connected by ribbon connections. It has directionality — data flows downward. It has memory — execution history is visible as ghost traces. It has state — the entire spine shifts its visual language when the system moves between Live and Sealed.
+The spine is the central application flow of Spineless. It is a vertically scrolling, depth-aware arrangement of the main frontend → middleware/API → backend path. It has directionality — requests, interactions, and data move downward through the application stack.
 
-The spine is not a canvas. The user does not drag cards onto a 2D surface and draw connections between them. The spine arranges itself in execution order based on the connections the user authors. The user's job is to author cards and define relationships. The spine's job is to make the resulting system legible.
+The spine is not the whole codebase. Supporting systems appear around and through it as biological overlays, attachments, and contextual layers. The spine's job is to make the main application route legible without hiding the systems that support it.
 
 ---
 
@@ -15,12 +15,32 @@ The spine is not a canvas. The user does not drag cards onto a 2D surface and dr
 
 The spine uses **scroll-driven depth** as its primary spatial grammar — the same logic Active Theory's spine component uses.
 
-- **Scroll position = execution depth.** The further down the spine, the later in the execution chain.
-- **Branching = parallel depth tracks.** When a Logic Card branches, both paths continue downward in parallel, side by side, rejoining at a merge point.
-- **Z-depth = abstraction level.** Cards exist at slightly different distances from the viewer based on their role. Entry points sit closest. Deep chain elements recede slightly. This creates natural parallax as the user scrolls.
-- **Zoom = inspection level.** Scrolling vertically moves through the system. Zooming into any card magnifies its surface for direct interaction. Zooming out reveals the full system overview.
+- **Scroll position = application-flow depth.** The further down the spine, the later in the frontend → middleware/API → backend path.
+- **Branching = alternate request or feature paths.** Branches represent real alternate flows, not unrelated repository areas.
+- **Z-depth = system relationship.** The central spine stays closest. Supporting systems sit around it at contextual depth based on how they interact with the flow.
+- **Zoom = inspection level.** Scrolling vertically moves through the main flow. Zooming into a section reveals the supporting biological systems attached there.
 
-When a system grows complex, it scrolls deeper. It does not widen. Complexity is managed through depth, not sprawl.
+When a codebase grows complex, the central spine remains legible. Complexity is managed by separating the main flow from surrounding systems, not by forcing every component into one vertical line.
+
+---
+
+## Biological System Layers
+
+Supporting code is visualized as systems around the spine:
+
+| Anatomy metaphor | Visual role |
+| --- | --- |
+| Spine | Central vertical application flow |
+| Nervous system | Event and interaction signals firing into spine sections |
+| Circulatory system | Data movement, API calls, database reads/writes, cache paths |
+| Skeleton | Routes, schemas, directories, architectural structure |
+| Muscles | Services and functions that perform work at each section |
+| Organs | Feature domains attached to the spine where they execute |
+| Skin | UI and styling surfaces closest to the user-facing entry points |
+| Immune system | Auth, validation, permissions, errors, and security wrappers |
+| Brain / memory | State, persistence, configuration, and decision-making systems |
+
+These systems can be inspected without being mistaken for the spine itself.
 
 ---
 

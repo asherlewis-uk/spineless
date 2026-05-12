@@ -4,6 +4,10 @@
 
 ---
 
+> **Scope note:** Document 11 supersedes this document wherever spine-as-generated-system architecture conflicts with the application-flow spine reframe. This document remains architectural context only where non-conflicting.
+
+---
+
 ## 1. Source of Truth
 
 The agent mutates **spine state only**. The compiler deterministically generates source from spine state. Generated files are internal compilation artifacts — never the canonical state. There is one source of truth: the spine graph. Everything else is derived from it.

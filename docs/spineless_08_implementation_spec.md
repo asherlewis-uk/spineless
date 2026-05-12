@@ -4,6 +4,10 @@
 
 ---
 
+> **Scope note:** Document 11 supersedes this document wherever implementation details assume card-authored generation rather than application-flow codebase mapping.
+
+---
+
 ## 1. State Machine — Complete
 
 ### Live State Edit Path
